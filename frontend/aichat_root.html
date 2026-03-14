@@ -1,0 +1,650 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>哲学AI对话系统</title>
+<style>
+    /* 重置样式 */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+        line-height: 1.6;
+    }
+    
+    /* 顶部导航条 */
+    .header-nav {
+        background:  #c1eaff;
+        height: 70px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 1000;
+    }
+    
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .logo {
+        display: flex;
+        align-items: center;
+        color: rgb(0, 0, 0);
+        font-size: 24px;
+        font-weight: bold;
+        text-decoration: none;
+    }
+    
+    /* .logo-icon {
+        width: 40px;
+        height: 40px;
+        background:  #3cbaf9;
+        border-radius: 20px;
+        margin-right: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+    } */
+    
+    .nav-menu {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .nav-menu li {
+        margin-left: 25px;
+    }
+    
+    .nav-menu a {
+        color: rgba(5, 5, 5, 0.9);
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        padding: 8px 16px;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+    
+    .nav-menu a:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    /* 轮播图区域 - 替换原来的横幅区域 */
+    .carousel-container {
+        height: 380px;
+        position: relative;
+        overflow: hidden;
+        background-color: #1a3a5f;
+    }
+    
+    .carousel-slides {
+        display: flex;
+        width: 500%; /* 5张图片 */
+        height: 100%;
+        transition: transform 1s ease-in-out;
+    }
+    
+    .carousel-slide {
+        width: 20%; /* 每张图片占20%宽度 */
+        height: 100%;
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+    }
+    
+    /* 每张轮播图的背景和内容 */
+    .slide1 {
+        background: linear-gradient(rgba(26, 58, 95, 0.7), rgba(44, 82, 130, 0.7)), 
+                    url("my_imgs/影视.jpg");
+    }
+    
+    .slide2 {
+        background: linear-gradient(rgba(26, 58, 95, 0.7), rgba(44, 82, 130, 0.7)), 
+                    url("my_imgs/哲学家.jpg");
+    }
+    
+    .slide3 {
+        background: linear-gradient(rgba(26, 58, 95, 0.7), rgba(44, 82, 130, 0.7)), 
+                    url("my_imgs/作家.jpg");
+    }
+    
+    .slide4 {
+        background: linear-gradient(rgba(26, 58, 95, 0.7), rgba(44, 82, 130, 0.7)), 
+                    url("my_imgs/p1.jpg");
+    }
+    
+    .slide5 {
+        background: linear-gradient(rgba(26, 58, 95, 0.7), rgba(44, 82, 130, 0.7)), 
+                    url("my_imgs/p2.jpg");
+    }
+    
+    .carousel-content {
+        max-width: 800px;
+        padding: 0 20px;
+        z-index: 2;
+    }
+    
+    .carousel-content h1 {
+        font-size: 3.2rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        letter-spacing: 1px;
+    }
+    
+    .carousel-content p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 30px;
+        line-height: 1.8;
+    }
+    
+    .carousel-btn {
+        display: inline-block;
+        padding: 14px 36px;
+        background: linear-gradient(135deg, #b0fde6, #369bed);
+        color: white;
+        text-decoration: none;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(237, 168, 169, 0.3);
+    }
+    
+    .carousel-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(237, 168, 169, 0.4);
+    }
+    
+    /* 轮播图控制按钮 */
+    .carousel-controls {
+        position: absolute;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        z-index: 10;
+    }
+    
+    .carousel-dots {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .carousel-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    .carousel-dot.active {
+        background-color: #EDA8A9;
+        transform: scale(1.2);
+    }
+    
+    /* 轮播图导航按钮 */
+    .carousel-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 20px;
+        z-index: 10;
+    }
+    
+    .carousel-nav-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        outline: none;
+    }
+    
+    .carousel-nav-btn:hover {
+        background-color: rgba(237, 168, 169, 0.8);
+        transform: scale(1.1);
+    }
+    
+    /* 主体内容区 */
+    .main-container {
+        max-width: 1200px;
+        margin: -50px auto 40px;
+        padding: 0 20px;
+        position: relative;
+    }
+    
+    /* 卡片区域 */
+    .card-section {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        margin-bottom: 40px;
+    }
+    
+    .section-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .section-header h2 {
+        font-size: 2.2rem;
+        color: #1a3a5f;
+        margin-bottom: 15px;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 15px;
+    }
+    
+   
+    .section-header p {
+        color: #666;
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    /* 卡片网格布局 */
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+    }
+    
+    /* 卡片样式 */
+    .feature-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 1px solid #f0f0f0;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+    }
+    
+    .card-img {
+        height: 220px;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .card-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .feature-card:hover .card-img img {
+        transform: scale(1.05);
+    }
+    
+    .card-content {
+        padding: 25px;
+    }
+    
+    .card-content h3 {
+        color: #1a3a5f;
+        font-size: 1.4rem;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+    
+    .card-content p {
+        color: #666;
+        margin-bottom: 20px;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+    
+    .card-btn {
+        display: inline-block;
+        padding: 10px 24px;
+        background:#83f792;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        font-size: 14px;
+    }
+    
+    .card-btn:hover {
+        background: linear-gradient(135deg, #2c5282, #3a6bb0);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(44, 82, 130, 0.3);
+    }
+    
+  
+    
+   /* 响应式设计 */
+    @media (max-width: 768px) {
+        .header-nav {
+            height: 60px;
+        }
+        
+        .nav-container {
+            padding: 0 15px;
+        }
+        
+        .nav-menu {
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .nav-menu li {
+            margin-left: 10px;
+        }
+        
+        .nav-menu a {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+        
+        .carousel-container {
+            height: 320px;
+        }
+        
+        .carousel-content h1 {
+            font-size: 2.2rem;
+        }
+        
+        .carousel-content p {
+            font-size: 1rem;
+        }
+        
+        .carousel-nav-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+        }
+    }
+    
+    /* 图标字体 */
+    @font-face {
+        font-family: 'iconfont';
+        src: url('//at.alicdn.com/t/font_1234567_xyz.woff2') format('woff2'),
+             url('//at.alicdn.com/t/font_1234567_xyz.woff') format('woff'),
+             url('//at.alicdn.com/t/font_1234567_xyz.ttf') format('truetype');
+    }
+    
+    .icon {
+        font-family: 'iconfont' !important;
+        font-style: normal;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .icon-home::before { content: '\e600'; }
+    .icon-search::before { content: '\e601'; }
+    .icon-user::before { content: '\e602'; }
+    .icon-settings::before { content: '\e603'; }
+    .icon-help::before { content: '\e604'; }
+    .icon-book::before { content: '\e605'; }
+    .icon-video::before { content: '\e606'; }
+    .icon-philosophy::before { content: '\e607'; }
+    
+</style>
+</head>
+
+<body>
+    <!-- 顶部导航 -->
+    <header class="header-nav">
+        <div class="nav-container">
+           
+            <ul class="nav-menu">
+                <li><a href="aichat_root.html">首页</a></li>
+                <li><a href="aichat_profile.html">我的信息</a></li>  
+                <li><a href="#" onclick="openAIAssistant()">帮助中心</a></li>      </ul>
+        </div>
+    </header>
+    
+    <!-- 轮播图区域 - 替换原来的横幅 -->
+    <section class="carousel-container">
+        <div class="carousel-slides">
+            <!-- 第一张幻灯片 -->
+            <div class="carousel-slide slide1">
+                <div class="carousel-content">
+                     </div>
+            </div>
+            
+            <!-- 第二张幻灯片 -->
+            <div class="carousel-slide slide2">
+                <div class="carousel-content">
+                    </div>
+            </div>
+            
+            <!-- 第三张幻灯片 -->
+            <div class="carousel-slide slide3">
+                <div class="carousel-content">
+                     </div>
+            </div>
+            
+            <!-- 第四张幻灯片 -->
+            <div class="carousel-slide slide4">
+                <div class="carousel-content">
+                      </div>
+            </div>
+            
+            <!-- 第五张幻灯片 -->
+            <div class="carousel-slide slide5">
+                <div class="carousel-content">
+                       </div>
+            </div>
+        </div>
+        
+        <!-- 轮播图导航按钮 -->
+        <div class="carousel-nav">
+            <button class="carousel-nav-btn prev-btn">‹</button>
+            <button class="carousel-nav-btn next-btn">›</button>
+        </div>
+        
+        <!-- 轮播图指示器 -->
+        <div class="carousel-controls">
+            <div class="carousel-dots">
+                <span class="carousel-dot active" data-index="0"></span>
+                <span class="carousel-dot" data-index="1"></span>
+                <span class="carousel-dot" data-index="2"></span>
+                <span class="carousel-dot" data-index="3"></span>
+                <span class="carousel-dot" data-index="4"></span>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 主体内容区 -->
+    <main class="main-container">
+        <!-- 功能卡片区 -->
+        <section class="card-section" id="features">
+            <div class="section-header">
+                <h2>角色分类</h2>
+                <p>体验与不同角色对话，开启智慧交流新篇章</p>
+            </div>
+            
+            <div class="card-grid">
+                <!-- 哲学家卡片 -->
+                <article class="feature-card">
+                    <div class="card-img">
+                        <img src="my_imgs/哲学家.jpg" alt="孔子" width="350" height="220">
+                    </div>
+                    <div class="card-content">
+                        <h3>哲学家对话</h3>
+                        <p>与古今中外的伟大哲学家进行深度对话，探索哲学智慧，体验思想的碰撞与启迪。</p>
+                        <a href="aichat_philosophers.html" class="card-btn">开始对话</a>
+                    </div>
+                </article>
+                
+                <!-- 书籍卡片 -->
+                <article class="feature-card">
+                    <div class="card-img">
+                        <img src="my_imgs/作家.jpg" alt="老子" width="350" height="220">
+                    </div>
+                    <div class="card-content">
+                        <h3>作家对话</h3>
+                        <p>与经典文学作品作家，深入了解人物内心世界，体验文学的魅力。</p>
+                        <a href="aichat_write.html" class="card-btn">开始对话</a>
+                    </div>
+                </article>
+                
+                <!-- 影视角色卡片 -->
+                <article class="feature-card">
+                    <div class="card-img">
+                        <img src="my_imgs/影视.jpg" alt="亚里士多德" width="350" height="220">
+                    </div>
+                    <div class="card-content">
+                        <h3>影视角色对话</h3>
+                        <p>与经典影视作品中的角色互动，体验不同的人生故事，感受角色的情感世界。</p>
+                        <a href="aichat_move.html" class="card-btn">开始对话</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+        
+           
+    <script>
+        // 轮播图功能脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelector('.carousel-slides');
+            const dots = document.querySelectorAll('.carousel-dot');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            
+            let currentIndex = 0;
+            const totalSlides = 5; // 5张幻灯片
+            let slideInterval;
+            
+            // 更新轮播图位置
+            function updateCarousel() {
+                slides.style.transform = `translateX(-${currentIndex * 20}%)`;
+                
+                // 更新指示器
+                dots.forEach((dot, index) => {
+                    if (index === currentIndex) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+            
+            // 下一张幻灯片
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % totalSlides;
+                updateCarousel();
+            }
+            
+            // 上一张幻灯片
+            function prevSlide() {
+                currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+                updateCarousel();
+            }
+            
+            // 跳转到指定幻灯片
+            function goToSlide(index) {
+                currentIndex = index;
+                updateCarousel();
+                resetInterval(); // 重置自动轮播计时器
+            }
+            
+            // 开始自动轮播
+            function startInterval() {
+                slideInterval = setInterval(nextSlide, 5000); // 5秒切换一次
+            }
+            
+            // 重置自动轮播计时器
+            function resetInterval() {
+                clearInterval(slideInterval);
+                startInterval();
+            }
+            
+            // 事件监听
+            prevBtn.addEventListener('click', () => {
+                prevSlide();
+                resetInterval();
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                nextSlide();
+                resetInterval();
+            });
+            
+            dots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    goToSlide(index);
+                });
+            });
+            
+            // 鼠标悬停时暂停自动轮播
+            const carousel = document.querySelector('.carousel-container');
+            carousel.addEventListener('mouseenter', () => {
+                clearInterval(slideInterval);
+            });
+            
+            carousel.addEventListener('mouseleave', () => {
+                startInterval();
+            });
+            
+            // 初始化轮播图
+            updateCarousel();
+            startInterval();
+            
+            // 响应式调整轮播图高度
+            function adjustCarouselHeight() {
+                const carouselContainer = document.querySelector('.carousel-container');
+                if (window.innerWidth <= 768) {
+                    carouselContainer.style.height = '320px';
+                } else {
+                    carouselContainer.style.height = '380px';
+                }
+            }
+            
+            // 监听窗口大小变化
+            window.addEventListener('resize', adjustCarouselHeight);
+            adjustCarouselHeight(); // 初始化时执行一次
+        });
+    </script>
+    <script src="chat.js"></script>
+   
+</body>
+</html>

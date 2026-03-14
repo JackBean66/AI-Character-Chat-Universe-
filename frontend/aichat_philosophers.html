@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>哲学家对话系统</title>
+    <style>
+        /* ==================== CSS重置 ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        /* ==================== 主容器 ==================== */
+        .container {
+            width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* ==================== 顶部区域 ==================== */
+      .header {
+            height: 180px;
+              background: url('my_imgs/哲学家.jpg') center -100px / cover no-repeat;
+           color: white;
+            text-align: center;
+            line-height: 180px;
+            margin-bottom: 30px;
+            /* border-radius: 10px; */
+            /* box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); */
+        }
+        
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+        
+        /* ==================== 返回按钮 ==================== */
+        .back-btn {
+            margin-bottom: 25px;
+        }
+        
+        .back-btn a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 6px;
+            border: 2px solid  #000000;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .back-btn a:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        /* ==================== 主体布局 ==================== */
+        .main-content {
+            display: flex;
+            height: 650px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        /* ==================== 左侧导航 ==================== */
+        .sidebar {
+            width: 220px;
+            background: #f8f9fa;
+            border-right: 1px solid #eaeaea;
+            padding: 25px;
+        }
+        
+        .sidebar h3 {
+            color: #2c3e50;
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #000000;
+            text-align: center;
+        }
+        
+        .nav-menu {
+            list-style: none;
+        }
+        
+        .nav-menu li {
+            margin-bottom: 10px;
+        }
+        
+        .nav-menu a {
+            display: block;
+            padding: 12px 16px;
+            background: white;
+            color: #555;
+            text-decoration: none;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.2s;
+        }
+        
+        .nav-menu a:hover {
+            background:  #B2B2B2;
+            color: white;
+            border-color:#B2B2B2 ;
+        }
+        
+        /* ==================== 右侧内容区 ==================== */
+        .content-area {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+        
+        /* 滚动条样式 */
+       .content-area {
+    /* 保持原有样式 */
+    flex: 1;
+    padding: 25px;
+    overflow-y: auto;
+    
+    /* 隐藏滚动条但不影响布局 */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+.content-area::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}
+        /* ==================== 哲学家分类区 ==================== */
+        .philosopher-section {
+            margin-bottom: 35px;
+        }
+        
+        .philosopher-section h2 {
+            color: #2c3e50;
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        /* ==================== 哲学家网格 ==================== */
+        .philosopher-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        /* ==================== 哲学家卡片 ==================== */
+        .philosopher-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f0f0f0;
+            transition: all 0.3s;
+        }
+        
+        .philosopher-card:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+        
+        .card-image {
+            height: 180px;
+            overflow: hidden;
+        }
+        
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .philosopher-card:hover .card-image img {
+            transform: scale(1.05);
+        }
+        
+        .card-content {
+            padding: 18px;
+        }
+        
+        .card-content h3 {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        
+        .card-era {
+            color: #667eea;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+        
+        .card-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 18px;
+            height: 42px;
+            overflow: hidden;
+        }
+        
+        /* ==================== 对话按钮 ==================== */
+        .chat-btn {
+            width: 100%;
+            padding: 12px;
+            background:    #FF9FD7;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .chat-btn:hover {
+            background:  #F23BC6;
+        }
+        
+        /* ==================== 动画效果 ==================== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .philosopher-section {
+            animation: fadeIn 0.4s ease forwards;
+        }
+        
+        /* 为不同分类添加延迟效果 */
+        #eastern { animation-delay: 0.1s; }
+        #female { animation-delay: 0.2s; }
+        #chinese { animation-delay: 0.3s; }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部标题 -->
+        <div class="header">
+            <h1>哲学家对话系统</h1>
+        </div>
+        
+        <!-- 返回按钮 -->
+        <div class="back-btn">
+            <a href="aichat_root.html">← 返回首页</a>
+        </div>
+        
+        <!-- 主体内容 -->
+        <div class="main-content">
+            <!-- 左侧导航 -->
+            <div class="sidebar">
+                <h3>哲学分类</h3>
+                <ul class="nav-menu">
+                    <li><a href="#Ancient Philosophy"> 古代哲学（约公元前7世纪 — 公元5世纪）</a></li>
+                    <li><a href="#Medieval Philosophy"> 中世纪哲学（约5世纪 — 14世纪）</a></li>
+                    <li><a href="#Renaissance Philosophy">文艺复兴哲学（约14世纪 — 16世纪）</a></li>
+                    <li><a href="#Modern Philosophy">近代哲学（17世纪 — 19世纪初）</a></li>
+					<li><a href="#Contemporary Philosophy">现代哲学（19世纪中期 — 20世纪中期）</a></li>
+		
+                </ul>
+            </div>
+            
+            <!-- 右侧内容 -->
+            <div class="content-area">
+                               
+                <!-- 古代哲学（约公元前7世纪 — 公元5世纪） -->
+                <section id="Ancient Philosophy" class="philosopher-section">
+                    <h2>古代哲学（约公元前7世纪 — 公元5世纪）</h2>
+                    <div class="philosopher-grid">
+                        <article class="philosopher-card">
+    <div class="card-image">
+        <img src="my_imgs/苏格拉底.jpg" alt="苏格拉底">
+    </div>
+    <div class="card-content">
+        <h3>苏格拉底</h3>
+        <p class="card-era">古希腊（约公元前470-前399）</p>
+        <p class="card-description">西方哲学奠基者，主张“认识你自己”，通过问答法追求真理与美德。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+   <div class="card-image"
+         style="background: url('my_imgs/柏拉图.jpg') center -5px / cover no-repeat; height: 180px;"></div>
+           
+    <div class="card-content">
+        <h3>柏拉图</h3>
+        <p class="card-era">古希腊（约公元前427-前347）</p>
+        <p class="card-description">创立理念论，认为理念是真实的世界；著有《理想国》，探讨正义与哲学王。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+    <div class="card-image"
+         style="background: url('my_imgs/亚里士多德.jpg') center -30px / cover no-repeat; height: 180px;"></div>
+           
+    <div class="card-content">
+        <h3>亚里士多德</h3>
+        <p class="card-era">古希腊（公元前384-前322）</p>
+        <p class="card-description">百科全书式哲学家，创立逻辑学与形而上学，提出“四因说”与中庸伦理学。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+    
+    <div class="card-image"
+         style="background: url('my_imgs/伊壁鸠鲁.jpg') center -10px / cover no-repeat; height: 180px;"></div>
+           
+    <div class="card-content">
+        <h3>伊壁鸠鲁</h3>
+        <p class="card-era">希腊化时期（公元前341-前270）</p>
+        <p class="card-description">快乐主义创始人，主张通过消除恐惧（尤其对神与死亡的恐惧）获得内心宁静。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+   
+    <div class="card-image"
+         style="background: url('my_imgs/马可奥勒留.jpg') center -10px / cover no-repeat; height: 180px;"></div>
+           
+    <div class="card-content">
+        <h3>马可·奥勒留</h3>
+        <p class="card-era">古罗马（公元121-180）</p>
+        <p class="card-description">罗马皇帝，斯多葛学派代表，著有《沉思录》，强调理性、责任与顺应自然。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>              
+                    </div>
+                </section>
+                 <!--  中世纪哲学（约5世纪 — 14世纪） -->
+                <section id="Medieval Philosophy" class="philosopher-section">
+                    <h2> 中世纪哲学（约5世纪 — 14世纪）</h2>
+                    <div class="philosopher-grid">
+                        <article class="philosopher-card">
+    
+     <div class="card-image"
+         style="background: url('my_imgs/奥古斯丁.jpg') center -10px / cover no-repeat; height: 180px;"></div>
+       
+    <div class="card-content">
+        <h3>奥古斯丁</h3>
+        <p class="card-era">教父哲学（公元354-430）</p>
+        <p class="card-description">融合柏拉图主义与基督教，著有《忏悔录》与《上帝之城》，深刻探讨原罪、恩典与时间。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+    
+    <div class="card-image"
+         style="background: url('my_imgs/托马斯阿奎那.jpg') center -10px / cover no-repeat; height: 180px;"></div>
+       
+    <div class="card-content">
+        <h3>托马斯·阿奎那</h3>
+        <p class="card-era">经院哲学（约1225-1274）</p>
+        <p class="card-description">整合亚里士多德哲学与基督教神学，提出“五路证明”，构建庞大的神学哲学体系。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+    <div class="card-image">
+        <img src="my_imgs/安瑟伦.jpg" alt="安瑟伦">
+    </div>
+    <div class="card-content">
+        <h3>安瑟伦</h3>
+        <p class="card-era">经院哲学（1033-1109）</p>
+        <p class="card-description">提出“上帝存在的本体论证明”，名言“信仰寻求理解”。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+    
+     <div class="card-image"
+         style="background: url('my_imgs/伊本西那.jpg') center -26px / cover no-repeat; height: 180px;"></div>
+       
+    <div class="card-content">
+        <h3>伊本·西那（阿维森纳）</h3>
+        <p class="card-era">伊斯兰黄金时代（980-1037）</p>
+        <p class="card-description">波斯哲学家与医学家，其哲学综合了新柏拉图主义和亚里士多德主义，影响深远。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+     <div class="card-image"
+         style="background: url('my_imgs/奥卡姆的威廉照片.jpg') center -10px / cover no-repeat; height: 180px;"></div>
+       
+    <div class="card-content">
+        <h3>奥卡姆的威廉</h3>
+        <p class="card-era">中世纪晚期（约1287-1347）</p>
+        <p class="card-description">提出“奥卡姆剃刀”原则（如无必要，勿增实体），挑战经院哲学，为近代科学思维铺路。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+                        
+                        <!-- 可以复制更多卡片 -->
+                    </div>
+                </section>
+				 <!-- 古 文艺复兴哲学（约14世纪 — 16世纪） -->
+                <section id="Renaissance Philosophy" class="philosopher-section">
+                    <h2> 文艺复兴哲学（约14世纪 — 16世纪）</h2>
+                    <div class="philosopher-grid">
+                       <article class="philosopher-card">
+    
+    <div class="card-image"
+         style="background: url('my_imgs/伊拉斯谟像.jpg') center -26px / cover no-repeat; height: 180px;"></div>
+       
+    <div class="card-content">
+        <h3>伊拉斯谟</h3>
+        <p class="card-era">文艺复兴北方人文主义（1466-1536）</p>
+        <p class="card-description">代表作《愚人颂》，批判教会腐败与社会愚昧，倡导人文主义与和平的宗教改革。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+    
+    <div class="card-image"
+         style="background: url('my_imgs/马基雅维利.jpg') center -26px / cover no-repeat; height: 180px;"></div>
+       
+    <div class="card-content">
+        <h3>马基雅维利</h3>
+        <p class="card-era">文艺复兴（1469-1527）</p>
+        <p class="card-description">现代政治学之父，著有《君主论》，主张政治应脱离道德束缚，现实主义先驱。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+    <div class="card-image">
+        <img src="my_imgs/托马斯莫尔.jpg" alt="托马斯·莫尔">
+    </div>
+    <div class="card-content">
+        <h3>托马斯·莫尔</h3>
+        <p class="card-era">文艺复兴（1478-1535）</p>
+        <p class="card-description">著有《乌托邦》，描绘了一个财产公有、理性治理的理想社会，影响空想社会主义。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+    
+     <div class="card-image"
+         style="background: url('my_imgs/乔尔丹诺·布鲁诺.jpg') center -26px / cover no-repeat; height: 180px;"></div>
+       
+    <div class="card-content">
+        <h3>乔尔丹诺·布鲁诺</h3>
+        <p class="card-era">文艺复兴晚期（1548-1600）</p>
+        <p class="card-description">主张宇宙无限与多中心论，泛神论者，因捍卫日心说等思想被宗教裁判所焚烧。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+    <div class="card-image">
+        <img src="my_imgs/蒙田.jpg" alt="蒙田">
+    </div>
+    <div class="card-content">
+        <h3>蒙田</h3>
+        <p class="card-era">文艺复兴（1533-1592）</p>
+        <p class="card-description">散文集创始人，以《随笔集》闻名，强调怀疑主义、自我审视与宽容。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+                        
+                        <!-- 可以复制更多卡片 -->
+                    </div>
+                </section>
+				 <!-- 近代哲学（17世纪 — 19世纪初） -->
+                <section id="Modern Philosophy" class="philosopher-section">
+                    <h2>近代哲学（17世纪 — 19世纪初）</h2>
+                    <div class="philosopher-grid">
+                        <article class="philosopher-card">
+    
+    <div class="card-image"
+         style="background: url('my_imgs/笛卡尔.jpg') center -26px / cover no-repeat; height: 180px;"></div>
+       
+    <div class="card-content">
+        <h3>笛卡尔</h3>
+        <p class="card-era">理性主义（1596-1650）</p>
+        <p class="card-description">“近代哲学之父”，提出“我思故我在”，创立理性主义与 Cartesian 坐标系。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+
+    <div class="card-image"
+         style="background: url('my_imgs/斯宾诺莎.jpg') center -26px / cover no-repeat; height: 180px;"></div>
+       
+    <div class="card-content">
+        <h3>斯宾诺莎</h3>
+        <p class="card-era">理性主义（1632-1677）</p>
+        <p class="card-description">提出“神即自然”的泛神论，用几何学方法构建伦理学体系，追求理性自由。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+    <div class="card-image">
+        <img src="my_imgs/洛克.jpg" alt="洛克">
+    </div>
+    <div class="card-content">
+        <h3>洛克</h3>
+        <p class="card-era">经验主义（1632-1704）</p>
+        <p class="card-description">经验论奠基人，提出“白板说”，主张知识源于经验；自由主义政治哲学先驱。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+    
+    <div class="card-image"
+         style="background: url('my_imgs/休谟.jpg') center -26px / cover no-repeat; height: 180px;"></div>
+       
+    <div class="card-content">
+        <h3>休谟</h3>
+        <p class="card-era">经验主义（1711-1776）</p>
+        <p class="card-description">彻底的经验主义者与怀疑论者，挑战因果关系与自我观念的客观性，影响康德。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+   
+    <div class="card-image"
+         style="background: url('my_imgs/康德.jpg') center -26px / cover no-repeat; height: 180px;"></div>
+       
+    <div class="card-content">
+        <h3>康德</h3>
+        <p class="card-era">德国古典哲学（1724-1804）</p>
+        <p class="card-description">发动“哥白尼式革命”，调和理性与经验，著有《纯粹理性批判》，奠定批判哲学。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+                    </div>
+                </section>
+				 <!-- 现代哲学（19世纪中期 — 20世纪中期） -->
+                <section id="Contemporary Philosophy" class="philosopher-section">
+                    <h2>现代哲学（19世纪中期 — 20世纪中期）</h2>
+                    <div class="philosopher-grid">
+                      
+
+<article class="philosopher-card">
+    
+    <div class="card-image"
+         style="background: url('my_imgs/马克思.jpg') center -26px / cover no-repeat; height: 180px;"></div>
+       
+    <div class="card-content">
+        <h3>卡尔·马克思</h3>
+        <p class="card-era">马克思主义（1818-1883）</p>
+        <p class="card-description">创立历史唯物主义与剩余价值理论，强调实践与阶级斗争，著作《资本论》。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+    
+     <div class="card-image"
+         style="background: url('my_imgs/尼采.jpg') center -26px / cover no-repeat; height: 180px;"></div>
+       
+    <div class="card-content">
+        <h3>尼采</h3>
+        <p class="card-era">存在主义先驱（1844-1900）</p>
+        <p class="card-description">宣告“上帝已死”，批判传统道德，提出“权力意志”与“超人哲学”。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+    <div class="card-image">
+        <img src="my_imgs/伯特兰·罗素.jpg" alt="伯特兰·罗素">
+    </div>
+    <div class="card-content">
+        <h3>伯特兰·罗素</h3>
+        <p class="card-era">分析哲学（1872-1970）</p>
+        <p class="card-description">分析哲学奠基人之一，关注语言与逻辑，著有《西方哲学史》，社会活动家。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+
+<article class="philosopher-card">
+    <div class="card-image">
+        <img src="my_imgs/海德格尔.jpg" alt="海德格尔">
+    </div>
+    <div class="card-content">
+        <h3>海德格尔</h3>
+        <p class="card-era">现象学与存在主义（1889-1976）</p>
+        <p class="card-description">探讨“存在”问题，分析“此在”的生存结构，著有《存在与时间》。</p>
+        <button class="chat-btn">开始对话</button>
+    </div>
+</article>
+                    </div>
+                </section>
+            
+            </div>
+        </div>
+    </div>
+   
+</body>
+</html>
+<script src="chat.js"></script>
+<script>
+    // 可选：添加键盘快捷键
+    document.addEventListener('keydown', function(e) {
+        // ESC键关闭对话框
+        if (e.key === 'Escape') {
+            closeChat();
+        }
+        
+        // Ctrl+E导出历史记录
+        if (e.ctrlKey && e.key === 'e') {
+            e.preventDefault();
+            exportChatHistory();
+        }
+    });
+    // 可选：添加页面加载提示
+    window.onload = function() {
+        console.log('🎬 影视角色对话系统已加载完成！');
+        console.log('💬 点击任意角色的"与角色对话"按钮开始聊天');
+        console.log('🔧 确保后端服务已启动: http://localhost:5000');
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 哲学家AI对话测试前端</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            min-height: 90vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: flex;
+            gap: 30px;
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+        }
+
+        .left-panel {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .right-panel {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .philosopher-selection {
+            margin-bottom: 30px;
+        }
+
+        .philosopher-selection h3 {
+            margin-bottom: 20px;
+            color: #5d3fd3;
+            font-size: 1.5rem;
+        }
+
+        .philosopher-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .philosopher-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .philosopher-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .philosopher-card.active {
+            border-color: #5d3fd3;
+            background: #f0ebff;
+        }
+
+        .philosopher-card h4 {
+            color: #5d3fd3;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+
+        .philosopher-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .philosopher-card .era {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .input-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .input-section h3 {
+            margin-bottom: 20px;
+            color: #5d3fd3;
+            font-size: 1.5rem;
+        }
+
+        .message-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: #5d3fd3;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #5d3fd3 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(93, 63, 211, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .chat-section {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-section h3 {
+            margin-bottom: 20px;
+            color: #5d3fd3;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-container {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 400px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background: #5d3fd3;
+            color: white;
+            margin-left: auto;
+        }
+
+        .ai-message {
+            background: white;
+            border: 1px solid #ddd;
+            margin-right: auto;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .username {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-message .username {
+            color: rgba(255,255,255,0.9);
+        }
+
+        .ai-message .username {
+            color: #5d3fd3;
+        }
+
+        .message-content {
+            line-height: 1.5;
+        }
+
+        .status-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .status-section h4 {
+            margin-bottom: 15px;
+            color: #5d3fd3;
+        }
+
+        .status-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .status-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #5d3fd3;
+        }
+
+        .status-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .status-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .tokens-used {
+            color: #5d3fd3;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #d33;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border-left: 4px solid #d33;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #5d3fd3;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #5d3fd3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            background: #f8f9fa;
+        }
+    </style>
+    <!-- API 配置文件 - 必须在其他 JS 之前加载 -->
+    <script src="config.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 哲学家AI对话系统</h1>
+            <p>与苏格拉底、庄子、尼采等伟大思想家进行深度对话</p>
+        </div>
+
+        <div class="content">
+            <div class="left-panel">
+                <div class="philosopher-selection">
+                    <h3>🎭 选择哲学家</h3>
+                    <div class="philosopher-cards" id="philosopherCards">
+                        <!-- 哲学家卡片将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+
+                <div class="status-section">
+                    <h4>📊 系统状态</h4>
+                    <div class="status-info">
+                        <div class="status-item">
+                            <div class="status-label">当前哲学家</div>
+                            <div class="status-value" id="currentPhilosopher">未选择</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">对话轮数</div>
+                            <div class="status-value" id="messageCount">0</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">Token使用量</div>
+                            <div class="status-value tokens-used" id="tokensUsed">0</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">API状态</div>
+                            <div class="status-value" id="apiStatus">检查中...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="chat-section">
+                    <h3>💬 对话历史 <span id="currentPhilosopherBadge"></span></h3>
+                    <div class="chat-container" id="chatContainer">
+                        <div class="message ai-message">
+                            <div class="message-header">
+                                <div class="avatar">🤖</div>
+                                <div class="username">AI助手</div>
+                            </div>
+                            <div class="message-content">
+                                欢迎使用哲学家AI对话系统！请先在左侧选择一位哲学家，然后输入您的问题开始对话。
+                            </div>
+                        </div>
+                    </div>
+                    <div class="loading" id="loading">正在思考中...</div>
+                    <div class="error-message" id="errorMessage"></div>
+                </div>
+
+                <div class="input-section">
+                    <h3>📝 输入您的问题</h3>
+                    <textarea 
+                        class="message-input" 
+                        id="messageInput" 
+                        placeholder="请输入您的问题，例如：什么是美德？人生的意义是什么？..."
+                        rows="4"></textarea>
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="sendButton">
+                            <span>🚀 发送消息</span>
+                        </button>
+                        <button class="btn btn-secondary" id="clearButton">
+                            <span>🗑️ 清空对话</span>
+                        </button>
+                        <button class="btn btn-secondary" id="testApiButton">
+                            <span>🔍 测试API连接</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>技术栈：Flask + OpenAI API + DeepSeek模型 | 当前后端地址：<span id="apiUrl">http://localhost:5000</span></p>
+        </div>
+    </div>
+
+    <script>
+        // 配置 - 使用 config.js 中的配置
+        const API_BASE_URL = (typeof window.API_BASE_URL !== 'undefined') ? window.API_BASE_URL : 'http://localhost:5000';
+
+        // 更新页面上显示的 API 地址
+        document.addEventListener('DOMContentLoaded', function() {
+            const apiUrlEl = document.getElementById('apiUrl');
+            if (apiUrlEl) {
+                apiUrlEl.textContent = API_BASE_URL;
+            }
+        });
+        
+        // 状态管理
+        let currentPhilosopher = 'socrates';
+        let messageCount = 0;
+        let totalTokens = 0;
+        let chatHistory = [];
+
+        // DOM元素
+        const philosopherCards = document.getElementById('philosopherCards');
+        const currentPhilosopherEl = document.getElementById('currentPhilosopher');
+        const currentPhilosopherBadge = document.getElementById('currentPhilosopherBadge');
+        const messageCountEl = document.getElementById('messageCount');
+        const tokensUsedEl = document.getElementById('tokensUsed');
+        const apiStatusEl = document.getElementById('apiStatus');
+        const chatContainer = document.getElementById('chatContainer');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const clearButton = document.getElementById('clearButton');
+        const testApiButton = document.getElementById('testApiButton');
+        const loadingEl = document.getElementById('loading');
+        const errorMessageEl = document.getElementById('errorMessage');
+        const apiUrlEl = document.getElementById('apiUrl');
+
+        // 哲学家数据
+        const philosophers = [
+            { id: 'socrates', name: '苏格拉底', era: '古希腊', desc: '提问的艺术', emoji: '🏛️' },
+            { id: 'zhuangzi', name: '庄子', era: '战国时期', desc: '逍遥的境界', emoji: '🦋' },
+            { id: 'nietzsche', name: '尼采', era: '19世纪德国', desc: '超人的呼唤', emoji: '⚡' }
+        ];
+
+        // 初始化
+        function init() {
+            renderPhilosopherCards();
+            testApiConnection();
+            setupEventListeners();
+            loadFromLocalStorage();
+        }
+
+        // 渲染哲学家卡片
+        function renderPhilosopherCards() {
+            philosopherCards.innerHTML = '';
+            philosophers.forEach(philosopher => {
+                const card = document.createElement('div');
+                card.className = `philosopher-card ${philosopher.id === currentPhilosopher ? 'active' : ''}`;
+                card.innerHTML = `
+                    <div style="font-size: 2rem; margin-bottom: 10px;">${philosopher.emoji}</div>
+                    <h4>${philosopher.name}</h4>
+                    <p>${philosopher.desc}</p>
+                    <div class="era">${philosopher.era}</div>
+                `;
+                card.addEventListener('click', () => selectPhilosopher(philosopher.id));
+                philosopherCards.appendChild(card);
+            });
+        }
+
+        // 选择哲学家
+        function selectPhilosopher(philosopherId) {
+            currentPhilosopher = philosopherId;
+            const philosopher = philosophers.find(p => p.id === philosopherId);
+            
+            // 更新UI
+            currentPhilosopherEl.textContent = philosopher.name;
+            currentPhilosopherBadge.textContent = `当前对话：${philosopher.name}`;
+            renderPhilosopherCards();
+            
+            // 保存到本地存储
+            saveToLocalStorage();
+            
+            // 添加系统消息
+            addMessage('system', `已切换到${philosopher.name}，现在您可以与他对话了。`);
+        }
+
+        // 测试API连接
+        async function testApiConnection() {
+            try {
+                apiStatusEl.textContent = '连接中...';
+                const response = await fetch(`${API_BASE_URL}/philosophers`);
+                if (response.ok) {
+                    const data = await response.json();
+                    apiStatusEl.textContent = '✅ 连接正常';
+                    apiStatusEl.style.color = '#28a745';
+                    
+                    // 如果后端有哲学家数据，更新前端显示
+                    if (data.philosophers && data.philosophers.length > 0) {
+                        // 可以在这里同步后端的数据
+                    }
+                } else {
+                    throw new Error('API连接失败');
+                }
+            } catch (error) {
+                apiStatusEl.textContent = '❌ 连接失败';
+                apiStatusEl.style.color = '#dc3545';
+                console.error('API连接错误:', error);
+            }
+        }
+
+        // 发送消息
+        async function sendMessage() {
+            //去除空格
+            const message = messageInput.value.trim();
+            if (!message) {
+                showError('请输入消息内容');
+                return;
+            }
+            
+            if (!currentPhilosopher) {
+                showError('请先选择一位哲学家');
+                return;
+            }
+
+            // 添加用户消息到聊天记录
+            addMessage('user', message);
+            messageInput.value = '';
+            
+            // 显示加载中
+            showLoading(true);
+            hideError();
+
+            try {
+                // 发送请求到后端
+                const response = await fetch(`${API_BASE_URL}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        philosopher: currentPhilosopher,
+                        message: message
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    // 添加AI回复到聊天记录
+                    addMessage('ai', data.reply);
+                    
+                    // 更新统计信息
+                    totalTokens += data.tokens_used || 0;
+                    messageCount += 1;
+                    updateStats();
+                    
+                    // 保存到聊天历史
+                    chatHistory.push({
+                        philosopher: currentPhilosopher,
+                        userMessage: message,
+                        aiReply: data.reply,
+                        timestamp: new Date().toISOString(),
+                        tokens: data.tokens_used || 0
+                    });
+                    
+                    saveToLocalStorage();
+                } else {
+                    throw new Error(data.error || '未知错误');
+                }
+            } catch (error) {
+                showError(`发送失败：${error.message}`);
+                console.error('发送消息错误:', error);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 添加消息到聊天界面
+        function addMessage(type, content) {
+            // 创建一个 <div> 标签
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type === 'user' ? 'user-message' : 'ai-message'}`;
+            
+            const philosopher = philosophers.find(p => p.id === currentPhilosopher);
+            const userName = type === 'user' ? '您' : philosopher?.name || 'AI';
+            const avatar = type === 'user' ? '👤' : philosopher?.emoji || '🤖';
+            
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    <div class="avatar">${avatar}</div>
+                    <div class="username">${userName}</div>
+                </div>
+                // replace() 是 JavaScript 字符串的一个方法，用于查找并替换字符串中的内容
+                <div class="message-content">${content.replace(/\n/g, '<br>')}</div>
+            `;
+            // 将 messageDiv 这个DOM元素添加到页面的<body>标签中
+            chatContainer.appendChild(messageDiv);
+            //将聊天容器的滚动条滚动到最底部
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // 添加系统消息
+        function addSystemMessage(content) {
+            // 步骤1：创建div元素对象
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai-message';
+            messageDiv.style.backgroundColor = '#f0f7ff';
+            messageDiv.style.border = '1px solid #cce5ff';
+            
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    <div class="avatar">ℹ️</div>
+                    <div class="username" style="color: #004085;">系统提示</div>
+                </div>
+                <div class="message-content" style="color: #004085;">${content}</div>
+            `;
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // 清空对话
+        function clearChat() {
+            if (confirm('确定要清空所有对话记录吗？')) {
+                chatContainer.innerHTML = `
+                    <div class="message ai-message">
+                        <div class="message-header">
+                            <div class="avatar">🤖</div>
+                            <div class="username">AI助手</div>
+                        </div>
+                        <div class="message-content">
+                            对话已清空。请选择一位哲学家并输入问题开始新的对话。
+                        </div>
+                    </div>
+                `;
+                
+                chatHistory = [];
+                messageCount = 0;
+                totalTokens = 0;
+                updateStats();
+                saveToLocalStorage();
+            }
+        }
+
+        // 更新统计信息
+        function updateStats() {
+            messageCountEl.textContent = messageCount;
+            tokensUsedEl.textContent = totalTokens;
+        }
+
+        // 显示/隐藏加载状态
+        function showLoading(show) {
+            loadingEl.style.display = show ? 'block' : 'none';
+            sendButton.disabled = show;
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            errorMessageEl.textContent = message;
+            errorMessageEl.style.display = 'block';
+        }
+
+        // 隐藏错误信息
+        function hideError() {
+            errorMessageEl.style.display = 'none';
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            sendButton.addEventListener('click', sendMessage);
+            
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            clearButton.addEventListener('click', clearChat);
+            
+            testApiButton.addEventListener('click', testApiConnection);
+        }
+
+        // 保存到本地存储
+        function saveToLocalStorage() {
+            const data = {
+                currentPhilosopher,
+                chatHistory,
+                messageCount,
+                totalTokens
+            };
+            // 浏览器的本地存储API
+            // 'philosopherChat'：存储时的键名（可以自定义）
+            // JSON.stringify(data)：将JavaScript对象转换为JSON字符串
+            localStorage.setItem('philosopherChat', JSON.stringify(data));
+        }
+
+        // 从本地存储加载
+        function loadFromLocalStorage() {
+            try {
+                const saved = localStorage.getItem('philosopherChat');
+                if (saved) {
+                    const data = JSON.parse(saved);  
+                    currentPhilosopher = data.currentPhilosopher || 'socrates';
+                    chatHistory = data.chatHistory || [];
+                    messageCount = data.messageCount || 0;
+                    totalTokens = data.totalTokens || 0;
+                    
+                    // 更新UI
+                    const philosopher = philosophers.find(p => p.id === currentPhilosopher);
+                    currentPhilosopherEl.textContent = philosopher?.name || '苏格拉底';
+                    currentPhilosopherBadge.textContent = `当前对话：${philosopher?.name || '苏格拉底'}`;
+                    updateStats();
+                    renderPhilosopherCards();
+                    
+                    // 如果有历史记录，显示最后几条
+                    if (chatHistory.length > 0) {
+                        // 清空初始消息
+                        chatContainer.innerHTML = '';
+                        
+                        // 显示历史记录（最多显示最后10条）
+                        const recentHistory = chatHistory.slice(-10);
+                        recentHistory.forEach(item => {
+                            addMessage('user', item.userMessage);
+                            addMessage('ai', item.aiReply);
+                        });
+                        
+                        addSystemMessage(`已加载 ${recentHistory.length} 条历史对话`);
+                    }
+                }
+            } catch (error) {
+                console.error('加载本地存储失败:', error);
+            }
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

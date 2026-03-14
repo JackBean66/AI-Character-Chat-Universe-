@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作家作品对话系统</title>
+    <style>
+        /* ==================== CSS重置 ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        /* ==================== 主容器 ==================== */
+        .container {
+            width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* ==================== 顶部区域 ==================== */
+        .header {
+            height: 180px;
+              background: url('my_imgs/p1.jpg') center -100px / cover no-repeat;
+           color: white;
+            text-align: center;
+            line-height: 180px;
+            margin-bottom: 30px;
+            /* border-radius: 10px; */
+            /* box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); */
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+        
+        /* ==================== 返回按钮 ==================== */
+        .back-btn {
+            margin-bottom: 25px;
+        }
+        
+        .back-btn a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 6px;
+/*            border: 2px solid ;*/
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .back-btn a:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        /* ==================== 主体布局 ==================== */
+        .main-content {
+            display: flex;
+            height: 650px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        /* ==================== 左侧导航 ==================== */
+        .sidebar {
+            width: 220px;
+            background: #f8f9fa;
+            border-right: 1px solid #eaeaea;
+            padding: 25px;
+        }
+        
+        .sidebar h3 {
+            color: #2c3e50;
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #667eea;
+            text-align: center;
+        }
+        
+        .nav-menu {
+            list-style: none;
+        }
+        
+        .nav-menu li {
+            margin-bottom: 10px;
+        }
+        
+        .nav-menu a {
+            display: block;
+            padding: 12px 16px;
+            background: white;
+            color: #555;
+            text-decoration: none;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.2s;
+        }
+        
+        .nav-menu a:hover {
+            background:  #CECECE;
+            color: white;
+            border-color: #CECECE;
+        }
+        
+        /* ==================== 右侧内容区 ==================== */
+        .content-area {
+    /* 保持原有样式 */
+    flex: 1;
+    padding: 25px;
+    overflow-y: auto;
+    
+    /* 隐藏滚动条但不影响布局 */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+.content-area::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}
+        /* ==================== 作家分类区 ==================== */
+        .writer-section {
+            margin-bottom: 35px;
+        }
+        
+        .writer-section h2 {
+            color: #2c3e50;
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        /* ==================== 作家网格 ==================== */
+        .writer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        /* ==================== 作家卡片 ==================== */
+        .writer-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f0f0f0;
+            transition: all 0.3s;
+        }
+        
+        .writer-card:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+        
+        .card-image {
+            height: 180px;
+            overflow: hidden;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .writer-card:hover .card-image img {
+            transform: scale(1.05);
+        }
+        
+        .card-content {
+            padding: 18px;
+        }
+        
+        .card-content h3 {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        
+        .card-era {
+            color: #040404;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+        
+        .card-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 18px;
+            height: 42px;
+            overflow: hidden;
+        }
+        
+        /* ==================== 对话按钮 ==================== */
+        .chat-btn {
+            width: 100%;
+            padding: 12px;
+            background: #FF9FD7;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .chat-btn:hover {
+            background: #F23BC6;
+        }
+        
+        /* ==================== 动画效果 ==================== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .writer-section {
+            animation: fadeIn 0.4s ease forwards;
+        }
+        
+        /* 为不同分类添加延迟效果 */
+        #science-fiction { animation-delay: 0.1s; }
+        #detective { animation-delay: 0.2s; }
+        #classics { animation-delay: 0.3s; }
+        
+   
+        /* 分类标签 */
+        .category-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #edf2f7;
+            color: #4a5568;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 8px;
+            margin-bottom: 5px;
+        }
+        
+        .tags-container {
+            margin-bottom: 10px;
+            min-height: 30px;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部标题 -->
+        <div class="header">
+            <h1>作家作品对话系统</h1>
+        </div>
+        
+        <!-- 返回按钮 -->
+        <div class="back-btn">
+            <a href="aichat_root.html">← 返回首页</a>
+        </div>
+        
+        <!-- 主体内容 -->
+        <div class="main-content">
+            <!-- 左侧导航 -->
+            <div class="sidebar">
+                <h3>文学分类</h3>
+                <ul class="nav-menu">
+					<li><a href="#classic-literature">中国经典文学</a></li>
+                    <li><a href="#science-fiction">科幻文学</a></li>
+                    <li><a href="#detective">侦探悬疑</a></li>
+                    <li><a href="#classics">经典名著</a></li>
+                    <li><a href="#modern">现代文学</a></li>
+					
+              
+                </ul>
+            </div>
+            
+            <!-- 右侧内容 -->
+            <div class="content-area">
+               
+				
+				<!-- 中国经典文学 -->
+				<section id="classic-literature" class="writer-section">
+				    <h2>经典文学</h2>
+				    <div class="writer-grid">
+				        <!-- 红楼梦 -->
+				        <article class="writer-card">
+				            <div class="card-image">
+				                <img src="my_imgs/红楼梦.jpg" alt="红楼梦">
+    </div>
+				            <div class="card-content">
+				                <h3>曹雪芹</h3>
+				                <p class="card-era">清代文学家</p>
+				                <div class="tags-container">
+				                    <span class="category-tag">古典小说</span>
+				                    <span class="category-tag">人情小说</span>
+				                    <span class="category-tag">四大名著</span>
+				                </div>
+				                <p class="card-description">《红楼梦》作者，中国古典小说巅峰之作，以贾、史、王、薛四大家族兴衰为背景，展现封建社会人情世态。</p>
+				                <button class="chat-btn">与作家对话</button>
+				            </div>
+				        </article>
+				
+				        <!-- 余华 -->
+				        <article class="writer-card">
+				            <div class="card-image">
+				                <img src="my_imgs/余华.jpg" alt="余华"></div>
+				            <div class="card-content">
+				                <h3>余华</h3>
+				                <p class="card-era">中国当代作家</p>
+				                <div class="tags-container">
+				                    <span class="category-tag">现实主义</span>
+				                    <span class="category-tag">人性探索</span>
+				                    <span class="category-tag">先锋文学</span>
+				                </div>
+				                <p class="card-description">《活着》《许三观卖血记》作者，作品以冷峻的笔触描写中国社会变迁中小人物的命运与生存状态。</p>
+				                <button class="chat-btn">与作家对话</button>
+				            </div>
+				        </article>
+				
+				        <!-- 史铁生 -->
+				        <article class="writer-card">
+				            <div class="card-image">
+				                <img src="my_imgs/史铁生.jpg" alt="史铁生"></div>
+				            <div class="card-content">
+				                <h3>史铁生</h3>
+				                <p class="card-era">中国当代作家</p>
+				                <div class="tags-container">
+				                    <span class="category-tag">生命哲学</span>
+				                    <span class="category-tag">残疾文学</span>
+				                    <span class="category-tag">精神探索</span>
+				                </div>
+				                <p class="card-description">《我与地坛》《务虚笔记》作者，作品关注生命意义、命运与信仰，以独特的生命体验探讨存在价值。</p>
+				                <button class="chat-btn">与作家对话</button>
+				            </div>
+				        </article>
+				
+<!-- 三毛 -->
+<article class="writer-card">
+    <div class="card-image"
+         style="background: url('my_imgs/三毛.jpg') center -20px / cover no-repeat; height: 180px;"></div>
+    <div class="card-content">
+        <h3>三毛</h3>
+        <p class="card-era">中国台湾作家</p>
+        <div class="tags-container">
+            <span class="category-tag">旅行文学</span>
+            <span class="category-tag">情感散文</span>
+            <span class="category-tag">自由精神</span>
+        </div>
+        <p class="card-description">《撒哈拉的故事》《雨季不再来》作者，作品充满异域风情与人文关怀，展现对自由、爱情与生命的独特理解。</p>
+        <button class="chat-btn">与作家对话</button>
+    </div>
+</article>
+				        <!-- 余秋雨 -->
+				        <article class="writer-card">
+				            <div class="card-image">
+				                <img src="my_imgs/余秋雨.jpg" alt="余秋雨"></div>
+				            <div class="card-content">
+				                <h3>余秋雨</h3>
+				                <p class="card-era">中国当代学者、作家</p>
+				                <div class="tags-container">
+				                    <span class="category-tag">文化散文</span>
+				                    <span class="category-tag">历史思考</span>
+				                    <span class="category-tag">人文精神</span>
+				                </div>
+				                <p class="card-description">《文化苦旅》《千年一叹》作者，以历史文化的深度探索和散文笔法，展现中华文化的博大精深与现代反思。</p>
+				                <button class="chat-btn">与作家对话</button>
+				            </div>
+				        </article>
+				    </div>
+				</section>
+				<!-- 科幻文学 -->
+                <section id="science-fiction" class="writer-section">
+                    <h2>科幻文学</h2>
+                    <div class="writer-grid">
+                        <article class="writer-card">
+                            <div class="card-image">
+                               <img src="my_imgs/三体.jpg" alt="三体"></div>
+                            <div class="card-content">
+                                <h3>刘慈欣</h3>
+                                <p class="card-era">中国当代科幻作家</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">硬科幻</span>
+                                    <span class="category-tag">宇宙社会学</span>
+                                    <span class="category-tag">雨果奖</span>
+                                </div>
+                                <p class="card-description">《三体》三部曲作者，中国科幻文学的代表人物，其作品以宏大的宇宙视角和深刻的哲学思考著称。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                            <div class="card-image">
+                                <img src="my_imgs/银河帝国.jpg" alt="银河帝国"></div>
+                            <div class="card-content">
+                                <h3>艾萨克·阿西莫夫</h3>
+                                <p class="card-era">美国科幻作家 (1920-1992)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">基地系列</span>
+                                    <span class="category-tag">机器人三定律</span>
+                                    <span class="category-tag">科普作家</span>
+                                </div>
+                                <p class="card-description">科幻小说黄金时代的代表作家之一，以《基地系列》、《银河帝国三部曲》和《机器人系列》闻名。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                            <div class="card-image">
+                                <img src="my_imgs/.jpg" alt="三毛"></div>
+                            <div class="card-content">
+                                <h3>威廉·吉布森</h3>
+                                <p class="card-era">美国科幻作家 (1948-)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">赛博朋克</span>
+                                    <span class="category-tag">数字空间</span>
+                                    <span class="category-tag">未来主义</span>
+                                </div>
+                                <p class="card-description">赛博朋克文学的开创者，《神经漫游者》作者，预言了互联网、虚拟现实等科技发展。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                            <div class="card-image">
+                                <img src="my_imgs/沙丘.jpg" alt="沙丘"></div>
+                            <div class="card-content">
+                                <h3>弗兰克·赫伯特</h3>
+                                <p class="card-era">美国科幻作家 (1920-1986)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">生态科幻</span>
+                                    <span class="category-tag">政治科幻</span>
+                                    <span class="category-tag">宗教科幻</span>
+                                </div>
+                                <p class="card-description">《沙丘》系列作者，作品融合政治、宗教、生态和哲学，创造了科幻文学中最复杂的世界观之一。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                            <div class="card-image" style="background: url('my_imgs/乔治奥威尔.jpg') center -200px / cover no-repeat; height: 180px;"></div>
+    <div class="card-content">
+                            <div class="card-content">
+                                <h3>乔治·奥威尔</h3>
+                                <p class="card-era">英国作家 (1903-1950)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">反乌托邦</span>
+                                    <span class="category-tag">政治讽刺</span>
+                                    <span class="category-tag">社会批判</span>
+                                </div>
+                                <p class="card-description">以《1984》和《动物农场》闻名，作品深刻探讨极权主义、言论自由和个人自由等主题。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <!-- 阿道司·赫胥黎 -->
+<article class="writer-card">
+    <div class="card-image"
+         style="background: url('my_imgs/阿道司·赫胥黎.jpg') center -15px / cover no-repeat; height: 180px;"></div>
+    <div class="card-content">
+        <h3>阿道司·赫胥黎</h3>
+        <p class="card-era">英国作家 (1894-1963)</p>
+        <div class="tags-container">
+            <span class="category-tag">反乌托邦</span>
+            <span class="category-tag">技术统治</span>
+            <span class="category-tag">社会预言</span>
+        </div>
+        <p class="card-description">《美丽新世界》作者，描绘了一个由技术控制的未来社会，探讨自由、幸福与人性本质。</p>
+        <button class="chat-btn">与作家对话</button>
+    </div>
+</article>
+                    </div>
+                </section>
+                
+                <!-- 侦探悬疑 -->
+                <section id="detective" class="writer-section">
+                    <h2>侦探悬疑</h2>
+                    <div class="writer-grid">
+                        <article class="writer-card">
+                            <div class="card-image">
+                               <img src="my_imgs/阿加莎.jpg" alt="阿加莎·克里斯蒂"></div>
+                            <div class="card-content">
+                                <h3>阿加莎·克里斯蒂</h3>
+                                <p class="card-era">英国侦探小说作家 (1890-1976)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">推理女王</span>
+                                    <span class="category-tag">密室杀人</span>
+                                    <span class="category-tag">心理悬疑</span>
+                                </div>
+                                <p class="card-description">世界最畅销的作家之一，创造了赫尔克里·波洛和马普尔小姐等经典侦探形象。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                            <div class="card-image">
+                               <img src="my_imgs/阿瑟柯南道尔.jpg" alt="阿瑟·柯南·道尔"></div>
+                            <div class="card-content">
+                                <h3>阿瑟·柯南·道尔</h3>
+                                <p class="card-era">英国作家 (1859-1930)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">侦探小说之父</span>
+                                    <span class="category-tag">逻辑推理</span>
+                                    <span class="category-tag">经典形象</span>
+                                </div>
+                                <p class="card-description">创造了夏洛克·福尔摩斯这一世界文学史上最著名的侦探形象，开创了推理小说的黄金时代。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                            <div class="card-image" style="background: url('my_imgs/钱德勒.jpg') center -30px / cover no-repeat; height: 180px;"></div>
+    <div class="card-content">
+                            <div class="card-content">
+                                <h3>雷蒙德·钱德勒</h3>
+                                <p class="card-era">美国侦探小说作家 (1888-1959)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">硬汉派</span>
+                                    <span class="category-tag">黑色电影</span>
+                                    <span class="category-tag">冷硬派</span>
+                                </div>
+                                <p class="card-description">硬汉派侦探小说的代表，创造了菲利普·马洛这一经典侦探形象，影响了无数犯罪小说和电影。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                            <div class="card-image">
+                                <img src="my_imgs/东野奎吾.jpg" alt="东野奎吾"></div>
+                            <div class="card-content">
+                                <h3>东野圭吾</h3>
+                                <p class="card-era">日本推理小说作家 (1958-)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">社会派推理</span>
+                                    <span class="category-tag">人性探究</span>
+                                    <span class="category-tag">畅销作家</span>
+                                </div>
+                                <p class="card-description">日本当代最受欢迎的推理小说家之一，作品融合精妙诡计与人性深度，代表作《白夜行》、《解忧杂货店》。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                            <div class="card-image">
+                                <img src="my_imgs/丹布朗.jpg" alt="丹·布朗"></div>
+                            <div class="card-content">
+                                <h3>丹·布朗</h3>
+                                <p class="card-era">美国悬疑小说作家 (1964-)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">符号学</span>
+                                    <span class="category-tag">宗教悬疑</span>
+                                    <span class="category-tag">知识型悬疑</span>
+                                </div>
+                                <p class="card-description">以《达·芬奇密码》闻名，作品融合历史、艺术、密码学与悬疑情节，创造了独特的"知识悬疑"风格。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+						</div>  
+               	 </section> 
+			    <!-- 经典名著 -->
+                <section id="classics" class="writer-section">
+                    <h2>经典名著</h2>
+                    <div class="writer-grid">
+                        <article class="writer-card">
+                            <div class="card-image" style="background: url('my_imgs/列夫托尔斯泰.jpg') center -50px / cover no-repeat; height: 180px;"></div>
+    <div class="card-content">
+                            <div class="card-content">
+                                <h3>列夫·托尔斯泰</h3>
+                                <p class="card-era">俄国作家 (1828-1910)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">现实主义</span>
+                                    <span class="category-tag">史诗巨著</span>
+                                    <span class="category-tag">道德哲学</span>
+                                </div>
+                                <p class="card-description">俄国文学巨匠，代表作《战争与和平》、《安娜·卡列尼娜》，作品深刻探讨人性、历史与道德。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                           <div class="card-image" style="background: url('my_imgs/加夫列尔·加西亚·马尔克斯.jpg') center -25px / cover no-repeat; height: 180px;"></div>
+    <div class="card-content">
+                            <div class="card-content">
+                                <h3>加夫列尔·加西亚·马尔克斯</h3>
+                                <p class="card-era">哥伦比亚作家 (1927-2014)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">魔幻现实主义</span>
+                                    <span class="category-tag">拉美文学</span>
+                                    <span class="category-tag">诺贝尔奖</span>
+                                </div>
+                                <p class="card-description">拉丁美洲魔幻现实主义文学的代表，1982年诺贝尔文学奖得主，《百年孤独》影响了世界文学。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                            <div class="card-image" style="background: url('my_imgs/维克多雨果.jpg') center -50px / cover no-repeat; height: 180px;"></div>
+    <div class="card-content">
+                            <div class="card-content">
+                                <h3>维克多·雨果</h3>
+                                <p class="card-era">法国作家 (1802-1885)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">浪漫主义</span>
+                                    <span class="category-tag">社会批判</span>
+                                    <span class="category-tag">人道主义</span>
+                                </div>
+                                <p class="card-description">法国浪漫主义文学的代表人物，代表作《悲惨世界》、《巴黎圣母院》，作品充满人道主义关怀。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                            <div class="card-image" style="background: url('my_imgs/简奥斯汀.jpg') center -50px / cover no-repeat; height: 180px;"></div>
+    <div class="card-content">
+                            <div class="card-content">
+                                <h3>简·奥斯汀</h3>
+                                <p class="card-era">英国作家 (1775-1817)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">女性文学</span>
+                                    <span class="category-tag">社会风俗</span>
+                                    <span class="category-tag">爱情婚姻</span>
+                                </div>
+                                <p class="card-description">英国文学史上最重要的女性作家之一，以细腻的社会观察和机智的对话闻名，《傲慢与偏见》是其代表作。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                            <div class="card-image">
+                                <img src="my_imgs/司汤达.jpg" alt="司汤达"></div>
+                            <div class="card-content">
+                                <h3>司汤达</h3>
+                                <p class="card-era">法国作家 (1783-1842)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">心理分析</span>
+                                    <span class="category-tag">现实主义</span>
+                                    <span class="category-tag">社会批判</span>
+                                </div>
+                                <p class="card-description">法国现实主义文学的先驱，《红与黑》是心理分析小说的杰作，深刻描绘了个人野心与社会限制的冲突。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                            <div class="card-image" style="background: url('my_imgs/詹姆斯乔伊斯.jpg') center -50px / cover no-repeat; height: 180px;"></div>
+    <div class="card-content">
+                            <div class="card-content">
+                                <h3>詹姆斯·乔伊斯</h3>
+                                <p class="card-era">爱尔兰作家 (1882-1941)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">意识流</span>
+                                    <span class="category-tag">现代主义</span>
+                                    <span class="category-tag">语言实验</span>
+                                </div>
+                                <p class="card-description">20世纪最具影响力的作家之一，《尤利西斯》是现代主义文学的里程碑，革新了小说的叙事技巧。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+                
+                <!-- 现代文学 -->
+                <section id="modern" class="writer-section">
+                    <h2>现代文学</h2>
+                    <div class="writer-grid">
+                        <article class="writer-card">
+                            <div class="card-image">
+                                <img src="my_imgs/树上春树.jpg" alt="树上春树"></div>
+                            <div class="card-content">
+                                <h3>村上春树</h3>
+                                <p class="card-era">日本作家 (1949-)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">都市孤独</span>
+                                    <span class="category-tag">超现实主义</span>
+                                    <span class="category-tag">音乐元素</span>
+                                </div>
+                                <p class="card-description">当代日本最具国际影响力的作家，作品融合现实与超现实，探讨现代人的孤独、失落与自我探索。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                            <div class="card-image">
+                                <img src="my_imgs/米兰昆德拉.jpg" alt="米兰·昆德拉"></div>
+                            <div class="card-content">
+                                <h3>米兰·昆德拉</h3>
+                                <p class="card-era">捷克裔法国作家 (1929-2023)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">存在主义</span>
+                                    <span class="category-tag">政治哲学</span>
+                                    <span class="category-tag">爱情哲学</span>
+                                </div>
+                                <p class="card-description">捷克裔法国作家，作品探讨存在、政治、爱情与记忆等主题，将小说与哲学思考完美结合。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                            <div class="card-image">
+                                <img src="my_imgs/卡勒德·胡赛尼.jpg" alt="卡勒德·胡赛尼"></div>
+                            <div class="card-content">
+                                <h3>卡勒德·胡赛尼</h3>
+                                <p class="card-era">阿富汗裔美国作家 (1965-)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">阿富汗故事</span>
+                                    <span class="category-tag">救赎主题</span>
+                                    <span class="category-tag">跨文化</span>
+                                </div>
+                                <p class="card-description">阿富汗裔美国作家，以《追风筝的人》闻名，作品讲述阿富汗的历史与人性故事，感动全球读者。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="writer-card">
+                             <div class="card-image" style="background: url('my_imgs/玛格丽特阿特伍德.jpg') center -50px / cover no-repeat; height: 180px;"></div>
+    <div class="card-content">
+            
+                            <div class="card-content">
+                                <h3>玛格丽特·阿特伍德</h3>
+                                <p class="card-era">加拿大作家 (1939-)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">女性主义</span>
+                                    <span class="category-tag">反乌托邦</span>
+                                    <span class="category-tag">生态关注</span>
+                                </div>
+                                <p class="card-description">加拿大著名作家，作品涵盖小说、诗歌和文学评论，《使女的故事》已成为反乌托邦文学的经典。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                        
+                   
+                        
+                        <article class="writer-card">
+                            <div class="card-image">
+                                <img src="my_imgs/安托万德圣埃克苏佩里.jpg" alt="安托万德圣埃克苏佩里"></div>
+                            <div class="card-content">
+                                <h3>安托万·德·圣.埃克苏佩里</h3>
+                                <p class="card-era">法国作家 (1900-1944)</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">童话寓言</span>
+                                    <span class="category-tag">人生哲学</span>
+                                    <span class="category-tag">纯真主题</span>
+                                </div>
+                                <p class="card-description">法国作家、飞行员，《小王子》是世界最畅销的书籍之一，以简单语言探讨深刻的人生哲理。</p>
+                                <button class="chat-btn">与作家对话</button>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="chat.js"></script>
+<script>
+    // 可选：添加键盘快捷键
+    document.addEventListener('keydown', function(e) {
+        // ESC键关闭对话框
+        if (e.key === 'Escape') {
+            closeChat();
+        }
+        
+        // Ctrl+E导出历史记录
+        if (e.ctrlKey && e.key === 'e') {
+            e.preventDefault();
+            exportChatHistory();
+        }
+    });
+    // 可选：添加页面加载提示
+    window.onload = function() {
+        console.log('🎬 影视角色对话系统已加载完成！');
+        console.log('💬 点击任意角色的"与角色对话"按钮开始聊天');
+        console.log('🔧 确保后端服务已启动: http://localhost:5000');
+    };
+</script>

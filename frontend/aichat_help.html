@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>帮助中心 - AI助手</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+        }
+        
+        .help-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .help-header h1 {
+            color: #1a3a5f;
+            margin-bottom: 20px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: #666;
+            margin: 30px 0;
+        }
+        
+        .start-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #10a37f, #0d8c6c);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="help-container">
+        <div class="help-header">
+            <h1>AI助手帮助中心</h1>
+            <p>正在为您连接AI助手...</p>
+        </div>
+        
+        <div class="loading-text" id="status">
+            正在初始化AI助手，请稍候...
+        </div>
+        
+        <button class="start-btn" onclick="startAIAssistant()">
+            立即与AI助手对话
+        </button>
+    </div>
+    
+    <script>
+        // 自动跳转到AI助手
+        function startAIAssistant() {
+            // 如果chat.js已加载，直接调用
+            if (typeof switchToChatPage !== 'undefined') {
+                switchToChatPage('AI助手', '系统助手');
+            } else {
+                document.getElementById('status').textContent = '正在加载聊天系统...';
+                setTimeout(startAIAssistant, 1000);
+            }
+        }
+        
+        // 页面加载后自动尝试启动
+        window.onload = function() {
+            setTimeout(startAIAssistant, 1500);
+        };
+    </script>
+</body>
+</html>

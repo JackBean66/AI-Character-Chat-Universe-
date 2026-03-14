@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>影视角色对话系统</title>
+    <style>
+        /* ==================== CSS重置 ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        /* ==================== 主容器 ==================== */
+        .container {
+            width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* ==================== 顶部区域 ==================== */
+        .header {
+            height: 180px;
+            background: url('my_imgs/影视.jpg') center -1000px / cover no-repeat;
+            color: white;
+            text-align: center;
+            line-height: 180px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+        
+        /* ==================== 返回按钮 ==================== */
+        .back-btn {
+            margin-bottom: 25px;
+        }
+        
+        .back-btn a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            color: #1a1a2e;
+            text-decoration: none;
+            border-radius: 6px;
+            border: 2px solid #1a1a2e;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .back-btn a:hover {
+            background: #1a1a2e;
+            color: white;
+        }
+        
+        /* ==================== 主体布局 ==================== */
+        .main-content {
+            display: flex;
+            height: 650px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        /* ==================== 左侧导航 ==================== */
+        .sidebar {
+            width: 220px;
+            background: #f8f9fa;
+            border-right: 1px solid #eaeaea;
+            padding: 25px;
+			  /* 实现滚动 */
+			overflow-y: auto;
+			height: 650px;
+			position: relative;
+        }
+        
+        .sidebar h3 {
+            color: #1a1a2e;
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #1a1a2e;
+            text-align: center;
+			
+        }
+        /* 添加滚动条样式 */
+		.sidebar::-webkit-scrollbar {
+		    width: 6px;
+		}
+		
+		.sidebar::-webkit-scrollbar-track {
+		    background: #f1f1f1;
+		    border-radius: 3px;
+		}
+		
+		.sidebar::-webkit-scrollbar-thumb {
+		    background: #1a1a2e;
+		    border-radius: 3px;
+		}
+		
+		.sidebar::-webkit-scrollbar-thumb:hover {
+		    background: #0f0f1c;
+		}
+		        .nav-menu {
+            list-style: none;
+        }
+        
+        .nav-menu li {
+            margin-bottom: 10px;
+        }
+        
+        .nav-menu a {
+            display: block;
+            padding: 12px 16px;
+            background: white;
+            color: #555;
+            text-decoration: none;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.2s;
+        }
+        
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: #1a1a2e;
+            color: white;
+            border-color: #1a1a2e;
+        }
+        
+        /* ==================== 右侧内容区 ==================== */
+        .content-area {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+        
+        /* 滚动条样式 */
+        .content-area {
+    /* 保持原有样式 */
+    flex: 1;
+    padding: 25px;
+    overflow-y: auto;
+    
+    /* 隐藏滚动条但不影响布局 */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+.content-area::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}
+        /* ==================== 角色分类区 ==================== */
+        .character-section {
+            margin-bottom: 35px;
+        }
+        
+        .character-section h2 {
+            color: #1a1a2e;
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 4px solid #1a1a2e;
+        }
+        
+        /* ==================== 角色网格 ==================== */
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        /* ==================== 角色卡片 ==================== */
+        .character-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f0f0f0;
+            transition: all 0.3s;
+        }
+        
+        .character-card:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+        
+        .card-image {
+            height: 180px;
+            overflow: hidden;
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .card-image::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3));
+        }
+        
+        .character-card:hover .card-image::before {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5));
+        }
+        
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .character-card:hover .card-image img {
+            transform: scale(1.05);
+        }
+        
+        .card-content {
+            padding: 18px;
+        }
+        
+        .card-content h3 {
+            color: #1a1a2e;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        
+        .card-role {
+            color: #080808;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .card-era {
+            color: #0a0b0b;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+        
+        .card-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 18px;
+            height: 42px;
+            overflow: hidden;
+        }
+        
+        /* ==================== 对话按钮 ==================== */
+        .chat-btn {
+            width: 100%;
+            padding: 12px;
+            background: #e63946;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .chat-btn:hover {
+            background: #d62839;
+        }
+        
+        /* ==================== 动画效果 ==================== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .character-section {
+            animation: fadeIn 0.4s ease forwards;
+        }
+        
+        /* 为不同分类添加延迟效果 */
+        #breaking-bad { animation-delay: 0.1s; }
+        #better-call-saul { animation-delay: 0.2s; }
+        #blade-runner { animation-delay: 0.3s; }
+        #interstellar { animation-delay: 0.4s; }
+        #memories-of-murder { animation-delay: 0.5s; }
+        #journey-to-the-west { animation-delay: 0.6s; }
+        #harry-potter { animation-delay: 0.7s; }
+        
+        /* 占位图片样式 */
+        .placeholder-img {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            color: #f1faee;
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        /* 分类标签 */
+        .category-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #edf2f7;
+            color: #4a5568;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 8px;
+            margin-bottom: 5px;
+        }
+        
+        .tags-container {
+            margin-bottom: 10px;
+            min-height: 30px;
+        }
+        
+        /* 作品标识 */
+        .work-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            z-index: 2;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部标题 -->
+        <div class="header">
+            <h1>影视角色对话系统</h1>
+        </div>
+        
+        <!-- 返回按钮 -->
+        <div class="back-btn">
+            <a href="aichat_root.html">← 返回首页</a>
+        </div>
+        
+        <!-- 主体内容 -->
+        <div class="main-content">
+            <!-- 左侧导航 -->
+            <div class="sidebar">
+                <h3>作品分类</h3>
+                <ul class="nav-menu">
+                    <li><a href="#breaking-bad" class="active">绝命毒师</a></li>
+                    <li><a href="#better-call-saul">风骚律师</a></li>
+					<li><a href="#the-bad-kids">隐秘的角落</a></li>
+                    <li><a href="#chernobyl">切尔诺贝利</a></li>
+                    <li><a href="#pirates-of-the-caribbean">加勒比海盗</a></li> 
+                    <li><a href="#blade-runner">银翼杀手</a></li>
+                    <li><a href="#interstellar">星际穿越</a></li>
+                    <li><a href="#memories-of-murder">杀人回忆</a></li>
+                    <li><a href="#journey-to-the-west">宇宙探索编辑部</a></li>
+                    <li><a href="#harry-potter">哈利波特</a></li>
+					
+					<li><a href="#the-wandering-earth-1">流浪地球1</a></li>
+					<li><a href="#the-wandering-earth-2">流浪地球2</a></li>
+					<li><a href="#wong-fei-hung">黄飞鸿系列</a></li>
+					<li><a href="#enders-game">安德的游戏</a></li>
+					<li><a href="#安德的游戏">憨豆先生系列</a></li>
+					<li><a href="#farewell-my-concubine">霸王别姬</a></li>
+					<li><a href="#the-pig-the-snake-and-the-pigeon">周处除三害</a></li>
+					<li><a href="#dying-to-survive">我不是药神</a></li>
+					<li><a href="#wrath-of-silence"> 爆裂无声</a></li>
+					
+					
+					
+                </ul>
+            </div>
+            
+            <!-- 右侧内容 -->
+            <div class="content-area">
+				
+				
+				 <!-- 绝命毒师 -->
+                <section id="breaking-bad" class="character-section">
+                    <h2>绝命毒师</h2>
+                    <div class="character-grid">
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">绝命毒师</div>
+                                 <img src="my_imgs/沃尔特.jpg" alt="沃尔特·怀特" class="character-img">  
+                                 </div>
+                            <div class="card-content">
+                                <h3>沃尔特·怀特</h3>
+                                <p class="card-role">主角 / 海森堡</p>
+                                <p class="card-era">高中化学老师 → 毒枭</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">化学天才</span>
+                                    <span class="category-tag">家庭危机</span>
+                                    <span class="category-tag">权力欲望</span>
+                                </div>
+                                <p class="card-description">原本是平凡的高中化学老师，被诊断出癌症后开始制毒，逐渐堕落为冷酷无情的毒枭"海森堡"。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">绝命毒师</div>
+                                <img src="my_imgs/杰西.jpg" alt="沃尔特·怀特" class="character-img"> 
+                              </div>
+                        
+                            <div class="card-content">
+                                <h3>杰西·平克曼</h3>
+                                <p class="card-role">搭档 / 制毒者</p>
+                                <p class="card-era">街头毒贩 → 良心觉醒者</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">内心挣扎</span>
+                                    <span class="category-tag">师徒关系</span>
+                                    <span class="category-tag">救赎之路</span>
+                                </div>
+                                <p class="card-description">沃尔特的学生和制毒搭档，在毒品世界中挣扎求生，经历多次悲剧后寻求救赎的复杂角色。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">绝命毒师</div>
+                                <img src="my_imgs/古斯.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                        
+                            <div class="card-content">
+                                <h3>古斯塔沃·弗林</h3>
+                                <p class="card-role">大毒枭 / 商人</p>
+                                <p class="card-era">炸鸡店老板 / 毒品帝国首脑</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">优雅冷酷</span>
+                                    <span class="category-tag">商业头脑</span>
+                                    <span class="category-tag">完美主义</span>
+                                </div>
+                                <p class="card-description">表面上经营炸鸡连锁店，实则是精明冷静的毒品帝国首脑，以商业思维运营犯罪组织。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">绝命毒师</div>
+                               <img src="my_imgs/汉克.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                        
+                            <div class="card-content">
+                                <h3>汉克·施拉德</h3>
+                                <p class="card-role">DEA探员</p>
+                                <p class="card-era">沃尔特的连襟 / 海森堡追捕者</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">正义感</span>
+                                    <span class="category-tag">硬汉形象</span>
+                                    <span class="category-tag">家庭矛盾</span>
+                                </div>
+                                <p class="card-description">DEA缉毒局探员，沃尔特的连襟，表面粗犷实则敏锐，最终追捕"海森堡"却不知其真实身份。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">绝命毒师</div>
+                                <img src="my_imgs/索尔.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                        
+                            <div class="card-content">
+                                <h3>索尔·古德曼</h3>
+                                <p class="card-role">律师</p>
+                                <p class="card-era">罪犯的"问题解决者"</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">狡猾律师</span>
+                                    <span class="category-tag">黑白通吃</span>
+                                    <span class="category-tag">生存专家</span>
+                                </div>
+                                <p class="card-description">为罪犯服务的狡猾律师，精通法律漏洞，帮助沃尔特解决各种法律问题，后有自己的衍生剧。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">绝命毒师</div>
+                               <img src="my_imgs/麦克.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                        
+                            <div class="card-content">
+                                <h3>麦克·厄门绍特</h3>
+                                <p class="card-role">安全顾问 / 清道夫</p>
+                                <p class="card-era">前警察 → 职业罪犯</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">专业高效</span>
+                                    <span class="category-tag">道德准则</span>
+                                    <span class="category-tag">忠诚伙伴</span>
+                                </div>
+                                <p class="card-description">前警察转行的职业罪犯，高效专业的"清道夫"，有着自己的道德准则，是古斯塔沃的得力助手。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+                
+                <!-- 风骚律师 -->
+                <section id="better-call-saul" class="character-section">
+                    <h2>风骚律师</h2>
+                    <div class="character-grid">
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">风骚律师</div>
+                                <img src="my_imgs/索尔律师.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                        
+                            <div class="card-content">
+                                <h3>吉米·麦吉尔</h3>
+                                <p class="card-role">主角 / 索尔·古德曼</p>
+                                <p class="card-era">小律师 → 索尔·古德曼</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">身份转变</span>
+                                    <span class="category-tag">兄弟竞争</span>
+                                    <span class="category-tag">道德滑坡</span>
+                                </div>
+                                <p class="card-description">查克的弟弟，原本想成为正直律师，但在现实压力和兄弟阴影下逐渐蜕变为狡猾的索尔·古德曼。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image"
+         style="background: url('my_imgs/金.jpg') center -20px / cover no-repeat; height: 180px;"></div>
+          <div class="card-content">
+                                <h3>金·韦克斯勒</h3>
+                                <p class="card-role">律师 / 吉米的女友</p>
+                                <p class="card-era">理想主义者 → 现实妥协者</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">道德困境</span>
+                                    <span class="category-tag">爱情关系</span>
+                                    <span class="category-tag">职业危机</span>
+                                </div>
+                                <p class="card-description">才华横溢的律师，吉米的女友和合伙人，在职业道德与对吉米的感情间挣扎，最终走向黑暗。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                
+                               <div class="card-image"
+         style="background: url('my_imgs/查克.jpg') center -50px / cover no-repeat; height: 180px;"></div>
+                            <div class="card-content">
+                                <h3>查克·麦吉尔</h3>
+                                <p class="card-role">高级合伙人 / 吉米的哥哥</p>
+                                <p class="card-era">知名律师 / 电磁过敏症患者</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">兄弟恩怨</span>
+                                    <span class="category-tag">精神疾病</span>
+                                    <span class="category-tag">精英主义</span>
+                                </div>
+                                <p class="card-description">吉米的哥哥，知名律师，患有电磁过敏症，对吉米既爱又鄙视，是吉米转变的关键因素。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">风骚律师</div>
+                               <img src="my_imgs/纳乔.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                        
+                            <div class="card-content">
+                                <h3>纳乔·瓦尔加</h3>
+                                <p class="card-role">犯罪组织成员</p>
+                                <p class="card-era">萨拉曼卡家族成员 → 双重间谍</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">忠诚困境</span>
+                                    <span class="category-tag">生存挣扎</span>
+                                    <span class="category-tag">家庭责任</span>
+                                </div>
+                                <p class="card-description">萨拉曼卡家族的成员，在犯罪世界中挣扎求生，试图保护父亲并寻找出路，最终成为双重间谍。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">风骚律师</div>
+                                <img src="my_imgs/拉罗。.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                        
+                            <div class="card-content">
+                                <h3>拉罗·萨拉曼卡</h3>
+                                <p class="card-role">毒枭</p>
+                                <p class="card-era">萨拉曼卡家族成员</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">冷血无情</span>
+                                    <span class="category-tag">敏锐直觉</span>
+                                    <span class="category-tag">家族荣誉</span>
+                                </div>
+                                <p class="card-description">萨拉曼卡家族的冷血成员，极度危险且直觉敏锐，不信任任何人，对家族有着扭曲的忠诚。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">风骚律师</div>
+                               <img src="my_imgs/霍华德.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                        
+                            <div class="card-content">
+                                <h3>霍华德·哈姆林</h3>
+                                <p class="card-role">律所合伙人</p>
+                                <p class="card-era">HHM律所管理者</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">精英律师</span>
+                                    <span class="category-tag">表面完美</span>
+                                    <span class="category-tag">悲剧命运</span>
+                                </div>
+                                <p class="card-description">HHM律所的合伙人，表面光鲜的成功律师，实则内心复杂，成为麦吉尔兄弟冲突的牺牲品。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+                
+				
+				<!-- 隐秘的角落 -->
+<section id="the-bad-kids" class="character-section">
+    <h2> 隐秘的角落</h2>
+    <div class="character-grid">
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">隐秘的角落</div>
+                <img src="my_imgs/张东升.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                        
+            <div class="card-content">
+                <h3>张东升</h3>
+                <p class="card-role">主角 / 数学老师</p>
+                <p class="card-era">中年数学老师</p>
+                <div class="tags-container">
+                    <span class="category-tag">数学天才</span>
+                    <span class="category-tag">双重人格</span>
+                    <span class="category-tag">极端压抑</span>
+                </div>
+                <p class="card-description">表面上温文尔雅的少年宫数学老师，实则有着极度压抑的内心和精密的犯罪头脑。"您看我还有机会吗？"</p>
+                <button class="chat-btn" onclick="selectCharacter('张东升', '隐秘的角落')">与角色对话</button>
+            </div>
+        </article>
+
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">隐秘的角落</div>
+                 <img src="my_imgs/朱朝阳.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>朱朝阳</h3>
+                <p class="card-role">主角 / 初中生</p>
+                <p class="card-era">初中一年级学生</p>
+                <div class="tags-container">
+                    <span class="category-tag">学霸</span>
+                    <span class="category-tag">早熟</span>
+                    <span class="category-tag">内心复杂</span>
+                </div>
+                <p class="card-description">表面上是个听话的学霸，实则心思缜密、早熟聪明，在成人的罪恶与孩子的纯真之间挣扎。</p>
+                <button class="chat-btn" onclick="selectCharacter('朱朝阳', '隐秘的角落')">与角色对话</button>
+            </div>
+        </article>
+
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">隐秘的角落</div>
+                 <img src="my_imgs/严良.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>严良</h3>
+                <p class="card-role">重要角色 / 福利院孩子</p>
+                <p class="card-era">少年时期</p>
+                <div class="tags-container">
+                    <span class="category-tag">讲义气</span>
+                    <span class="category-tag">冲动</span>
+                    <span class="category-tag">渴望亲情</span>
+                </div>
+                <p class="card-description">从福利院逃出来的孩子，性格冲动但讲义气，一直在寻找自己的父亲，渴望得到家庭温暖。</p>
+                <button class="chat-btn" onclick="selectCharacter('严良', '隐秘的角落')">与角色对话</button>
+            </div>
+        </article>
+    </div>
+</section>
+
+<!-- 切尔诺贝利 -->
+<section id="chernobyl" class="character-section">
+    <h2>切尔诺贝利</h2>
+    <div class="character-grid">
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">切尔诺贝利</div>
+                 <img src="my_imgs/列加索尔.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>瓦列里·列加索夫</h3>
+                <p class="card-role">主角 / 核物理学家</p>
+                <p class="card-era">苏联时期</p>
+                <div class="tags-container">
+                    <span class="category-tag">核物理专家</span>
+                    <span class="category-tag">良知科学家</span>
+                    <span class="category-tag">真相守护者</span>
+                </div>
+                <p class="card-description">苏联核物理学家，切尔诺贝利事故调查委员会成员，为揭露真相不惜与体制对抗，最终选择以死明志。</p>
+                <button class="chat-btn" onclick="selectCharacter('瓦列里·列加索夫', '切尔诺贝利')">与角色对话</button>
+            </div>
+        </article>
+
+       
+    </div>
+</section>
+
+<!-- 加勒比海盗系列 -->
+<section id="pirates-of-the-caribbean" class="character-section">
+    <h2> 加勒比海盗系列</h2>
+    <div class="character-grid">
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">加勒比海盗</div>
+                 <img src="my_imgs/杰克.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>杰克·斯帕罗</h3>
+                <p class="card-role">主角 / 海盗船长</p>
+                <p class="card-era">海盗黄金时代</p>
+                <div class="tags-container">
+                    <span class="category-tag">狡猾机智</span>
+                    <span class="category-tag">酗酒</span>
+                    <span class="category-tag">追求自由</span>
+                </div>
+                <p class="card-description">"黑珍珠号"船长，狡猾、机智、酗酒但关键时刻总能化险为夷。经典台词："先生们，女士们，你们将永远记住这一天..."</p>
+                <button class="chat-btn" onclick="selectCharacter('杰克·斯帕罗', '加勒比海盗')">与角色对话</button>
+            </div>
+        </article>
+
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">加勒比海盗</div>
+                 <img src="my_imgs/威尔.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>威尔·特纳</h3>
+                <p class="card-role">主角 / 铁匠→海盗</p>
+                <p class="card-era">海盗黄金时代</p>
+                <div class="tags-container">
+                    <span class="category-tag">正直善良</span>
+                    <span class="category-tag">剑术高超</span>
+                    <span class="category-tag">为爱冒险</span>
+                </div>
+                <p class="card-description">原本是正直的铁匠学徒，为拯救爱人伊丽莎白而踏上冒险之旅，最终成为飞翔的荷兰人号船长。</p>
+                <button class="chat-btn" onclick="selectCharacter('威尔·特纳', '加勒比海盗')">与角色对话</button>
+            </div>
+        </article>
+
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">加勒比海盗</div>
+                 <img src="my_imgs/伊丽莎白.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>伊丽莎白·斯旺</h3>
+                <p class="card-role">主角 / 总督女儿→海盗王</p>
+                <p class="card-era">海盗黄金时代</p>
+                <div class="tags-container">
+                    <span class="category-tag">勇敢独立</span>
+                    <span class="category-tag">聪明机智</span>
+                    <span class="category-tag">打破常规</span>
+                </div>
+                <p class="card-description">总督的女儿，不甘于贵族小姐的生活，渴望冒险和自由，最终成为九大海盗王之一。</p>
+                <button class="chat-btn" onclick="selectCharacter('伊丽莎白·斯旺', '加勒比海盗')">与角色对话</button>
+            </div>
+        </article>
+
+        <article class="character-card">
+            <div class="card-image"
+         style="background: url('my_imgs/巴博斯.jpg') center -20px / cover no-repeat; height: 180px;"></div>
+            <div class="card-content">
+                <h3>赫克托·巴博萨</h3>
+                <p class="card-role">重要角色 / 海盗船长</p>
+                <p class="card-era">海盗黄金时代</p>
+                <div class="tags-container">
+                    <span class="category-tag">野心勃勃</span>
+                    <span class="category-tag">残忍狡猾</span>
+                    <span class="category-tag">复杂多面</span>
+                </div>
+                <p class="card-description">原黑珍珠号大副，背叛杰克成为船长，经历多次生死，性格复杂，亦敌亦友，最终为救女儿牺牲。</p>
+                <button class="chat-btn" onclick="selectCharacter('赫克托·巴博萨', '加勒比海盗')">与角色对话</button>
+            </div>
+        </article>
+
+        <article class="character-card">
+           <div class="card-image"
+         style="background: url('my_imgs/戴维.jpg') center -20px / cover no-repeat; height: 180px;"></div>
+            <div class="card-content">
+                <h3>戴维·琼斯</h3>
+                <p class="card-role">反派 / 飞翔的荷兰人号船长</p>
+                <p class="card-era">神话时代</p>
+                <div class="tags-container">
+                    <span class="category-tag">章鱼脸</span>
+                    <span class="category-tag">海洋霸主</span>
+                    <span class="category-tag">为情所困</span>
+                </div>
+                <p class="card-description">飞翔的荷兰人号船长，因爱情背叛而变得残忍，控制着海洋的生死，经典形象是章鱼脸。</p>
+                <button class="chat-btn" onclick="selectCharacter('戴维·琼斯', '加勒比海盗')">与角色对话</button>
+            </div>
+        </article>
+
+        <article class="character-card">
+            <div class="card-image"
+         style="background: url('my_imgs/萨拉.jpg') center -20px / cover no-repeat;height: 180px; width:300px;"></div>
+            <div class="card-content">
+                <h3>萨拉查船长</h3>
+                <p class="card-role">反派 / 沉默玛丽号船长</p>
+                <p class="card-era">亡灵海盗</p>
+                <div class="tags-container">
+                    <span class="category-tag">亡灵船长</span>
+                    <span class="category-tag">复仇者</span>
+                    <span class="category-tag">西班牙海军</span>
+                </div>
+                <p class="card-description">西班牙海军军官，因追捕海盗被杰克陷害变成亡灵，率领沉默玛丽号誓要向所有海盗复仇。</p>
+                <button class="chat-btn" onclick="selectCharacter('萨拉查船长', '加勒比海盗')">与角色对话</button>
+            </div>
+        </article>
+    </div>
+</section>
+
+
+               
+                <!-- 银翼杀手 -->
+                <section id="blade-runner" class="character-section">
+                    <h2>银翼杀手</h2>
+                    <div class="character-grid">
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">银翼杀手</div>
+                               <img src="my_imgs/瑞克.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+                            <div class="card-content">
+                                <h3>瑞克·戴克</h3>
+                                <p class="card-role">银翼杀手</p>
+                                <p class="card-era">复制人追捕者</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">身份困惑</span>
+                                    <span class="category-tag">人性探索</span>
+                                    <span class="category-tag">道德困境</span>
+                                </div>
+                                <p class="card-description">追捕逃亡复制人的银翼杀手，在工作中逐渐质疑自己的身份和人性，最终与复制人产生共情。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">银翼杀手</div>
+                                <img src="my_imgs/罗伊.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+                            <div class="card-content">
+                                <h3>罗伊·贝蒂</h3>
+                                <p class="card-role">复制人领袖</p>
+                                <p class="card-era">Nexus-6型复制人</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">存在主义</span>
+                                    <span class="category-tag">生命意义</span>
+                                    <span class="category-tag">悲情英雄</span>
+                                </div>
+                                <p class="card-description">Nexus-6型复制人领袖，拥有超强体能和智慧，为延长自己和其他复制人的生命而战。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                       
+                        
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">银翼杀手2049</div>
+                                <img src="my_imgs/k.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+                            <div class="card-content">
+                                <h3>K（乔）</h3>
+                                <p class="card-role">新一代银翼杀手</p>
+                                <p class="card-era">复制人猎人</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">身份追寻</span>
+                                    <span class="category-tag">记忆真实</span>
+                                    <span class="category-tag">自我价值</span>
+                                </div>
+                                <p class="card-description">新一代银翼杀手，复制人中的"异类"，在追捕任务中发现了可能改变世界的秘密和自己的身世之谜。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+                
+                <!-- 星际穿越 -->
+                <section id="interstellar" class="character-section">
+                    <h2>星际穿越</h2>
+                    <div class="character-grid">
+                        <article class="character-card">
+                            <div class="card-image"
+         style="background: url('my_imgs/库伯.jpg') center -20px / cover no-repeat; height: 180px;"></div>
+           
+                            <div class="card-content">
+                                <h3>库珀</h3>
+                                <p class="card-role">宇航员 / 父亲</p>
+                                <p class="card-era">前NASA飞行员</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">父女亲情</span>
+                                    <span class="category-tag">时空悖论</span>
+                                    <span class="category-tag">人类救赎</span>
+                                </div>
+                                <p class="card-description">前NASA飞行员，为了人类生存和与女儿团聚而踏上星际旅程，最终在五维空间中拯救人类。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">星际穿越</div>
+                                <img src="my_imgs/墨菲.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+                            <div class="card-content">
+                                <h3>墨菲·库珀</h3>
+                                <p class="card-role">科学家 / 女儿</p>
+                                <p class="card-era">理论物理学家</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">科学天才</span>
+                                    <span class="category-tag">父女纽带</span>
+                                    <span class="category-tag">拯救人类</span>
+                                </div>
+                                <p class="card-description">库珀的女儿，继承父亲科学天赋的理论物理学家，最终解开重力方程，拯救了地球上的人类。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image"
+         style="background: url('my_imgs/布兰德.jpg') center -20px / cover no-repeat; height: 180px;"></div>
+           
+                            <div class="card-content">
+                                <h3>布兰德教授</h3>
+                                <p class="card-role">NASA负责人</p>
+                                <p class="card-era">物理学家</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">计划A/B</span>
+                                    <span class="category-tag">道德抉择</span>
+                                    <span class="category-tag">人类未来</span>
+                                </div>
+                                <p class="card-description">NASA秘密基地的负责人，制定了拯救人类的A计划和B计划，对库珀隐瞒了关键信息。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        
+                    </div>
+                </section>
+                
+                <!-- 杀人回忆 -->
+                <section id="memories-of-murder" class="character-section">
+                    <h2>杀人回忆</h2>
+                    <div class="character-grid">
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">杀人回忆</div>
+                               <img src="my_imgs/斗满.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+                            <div class="card-content">
+                                <h3>朴斗满</h3>
+                                <p class="card-role">乡村警官</p>
+                                <p class="card-era">小镇警察</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">直觉办案</span>
+                                    <span class="category-tag">暴力审讯</span>
+                                    <span class="category-tag">无力感</span>
+                                </div>
+                                <p class="card-description">小镇警察，凭直觉和暴力手段办案，随着案件进展逐渐感到无力，最终放弃警察职业。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">杀人回忆</div>
+                                <img src="my_imgs/苏警官.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+                            <div class="card-content">
+                                <h3>苏泰允</h3>
+                                <p class="card-role">汉城警官</p>
+                                <p class="card-era">首尔派来的刑警</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">科学办案</span>
+                                    <span class="category-tag">证据至上</span>
+                                    <span class="category-tag">理想破灭</span>
+                                </div>
+                                <p class="card-description">从首尔调来的刑警，相信科学证据和理性分析，但在案件面前也逐渐失去信心。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+                
+                <!-- 宇宙探索编辑部 -->
+                <section id="journey-to-the-west" class="character-section">
+                    <h2>宇宙探索编辑部</h2>
+                    <div class="character-grid">
+                        <article class="character-card">
+                           <div class="card-image"
+         style="background: url('my_imgs/唐志军.jpg') center -20px / cover no-repeat; height: 180px;"></div>
+           
+                            <div class="card-content">
+                                <h3>唐志军</h3>
+                                <p class="card-role">《宇宙探索》主编</p>
+                                <p class="card-era">落魄科幻杂志主编</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">外星人痴迷</span>
+                                    <span class="category-tag">理想主义者</span>
+                                    <span class="category-tag">现实困境</span>
+                                </div>
+                                <p class="card-description">落魄科幻杂志主编，痴迷寻找外星人，踏上荒诞又感人的西南之旅，最终理解生命意义。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">宇宙探索编辑部</div>
+                                <img src="my_imgs/彩蓉.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+                            <div class="card-content">
+                                <h3>秦彩蓉</h3>
+                                <p class="card-role">编辑部同事</p>
+                                <p class="card-era">现实主义者</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">务实派</span>
+                                    <span class="category-tag">吐槽担当</span>
+                                    <span class="category-tag">默默支持</span>
+                                </div>
+                                <p class="card-description">编辑部的现实主义者，经常吐槽唐志军的不切实际，但始终默默支持着他的追寻。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+                
+                <!-- 哈利波特 -->
+                <section id="harry-potter" class="character-section">
+                    <h2>哈利·波特</h2>
+                    <div class="character-grid">
+                        <article class="character-card">
+                            <div class="card-image"
+         style="background: url('my_imgs/哈利.jpg') center -30px / cover no-repeat; height: 180px;"></div>
+           
+                            <div class="card-content">
+                                <h3>哈利·波特</h3>
+                                <p class="card-role">主角 / 大难不死的男孩</p>
+                                <p class="card-era">霍格沃茨学生</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">救世主</span>
+                                    <span class="category-tag">闪电伤疤</span>
+                                    <span class="category-tag">伏地魔魂器</span>
+                                </div>
+                                <p class="card-description">大难不死的男孩，命中注定要与伏地魔对决，在霍格沃茨学习魔法并最终击败黑暗势力。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                           <div class="card-image"
+         style="background: url('my_imgs/赫敏.jpg') center -30px / cover no-repeat; height: 180px;"></div>
+           
+                            <div class="card-content">
+                                <h3>赫敏·格兰杰</h3>
+                                <p class="card-role">学霸 / 麻瓜出身</p>
+                                <p class="card-era">魔法部部长</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">智慧</span>
+                                    <span class="category-tag">社会正义</span>
+                                    <span class="category-tag">女权主义</span>
+                                </div>
+                                <p class="card-description">麻瓜出身的顶尖学霸，凭借智慧和努力成为魔法界的重要人物，最终成为魔法部部长。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image"
+         style="background: url('my_imgs/罗恩.jpg') center -30px / cover no-repeat; height: 180px;"></div>
+           
+                    
+                            <div class="card-content">
+                                <h3>罗恩·韦斯莱</h3>
+                                <p class="card-role">忠实朋友</p>
+                                <p class="card-era">韦斯莱家族成员</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">忠诚</span>
+                                    <span class="category-tag">家庭温暖</span>
+                                    <span class="category-tag">成长历程</span>
+                                </div>
+                                <p class="card-description">哈利最忠诚的朋友，来自温暖但贫穷的韦斯莱家族，在友谊中不断成长并找到自我价值。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">哈利·波特</div>
+                                <img src="my_imgs/邓布利多.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+                            <div class="card-content">
+                                <h3>阿不思·邓布利多</h3>
+                                <p class="card-role">霍格沃茨校长</p>
+                                <p class="card-era">最伟大的巫师</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">智慧长者</span>
+                                    <span class="category-tag">复杂过去</span>
+                                    <span class="category-tag">牺牲精神</span>
+                                </div>
+                                <p class="card-description">霍格沃茨校长，当代最伟大的巫师，有着复杂的过去，为击败伏地魔制定长期计划。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                            <div class="card-image">
+                                <div class="work-badge">哈利·波特</div>
+                                 <img src="my_imgs/斯内普.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+                            <div class="card-content">
+                                <h3>西弗勒斯·斯内普</h3>
+                                <p class="card-role">双面间谍</p>
+                                <p class="card-era">魔药课教授</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">深情</span>
+                                    <span class="category-tag">牺牲</span>
+                                    <span class="category-tag">复杂性格</span>
+                                </div>
+                                <p class="card-description">表面冷酷的魔药课教授，实则是邓布利多的双面间谍，一生深爱莉莉·波特并为之牺牲。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                        
+                        <article class="character-card">
+                           <div class="card-image"
+         style="background: url('my_imgs/伏地魔.jpg') center -30px / cover no-repeat; height: 180px;"></div>
+           
+                            <div class="card-content">
+                                <h3>伏地魔</h3>
+                                <p class="card-role">反派 / 黑魔王</p>
+                                <p class="card-era">汤姆·里德尔</p>
+                                <div class="tags-container">
+                                    <span class="category-tag">恐惧死亡</span>
+                                    <span class="category-tag">纯血统优越</span>
+                                    <span class="category-tag">魂器</span>
+                                </div>
+                                <p class="card-description">原名汤姆·里德尔，因恐惧死亡而追求永生，分裂灵魂制作魂器，成为最危险的黑巫师。</p>
+                                <button class="chat-btn">与角色对话</button>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+				<!-- 流浪地球1 -->
+<section id="the-wandering-earth-1" class="character-section">
+    <h2> 流浪地球1</h2>
+    <div class="character-grid">
+        <article class="character-card">
+            <div class="card-image"
+         style="background: url('my_imgs/刘培强.jpg') center -30px / cover no-repeat; height: 180px;"></div>
+           
+            <div class="card-content">
+                <h3>刘培强</h3>
+                <p class="card-role">主角 / 宇航员</p>
+                <p class="card-era">近未来</p>
+                <div class="tags-container">
+                    <span class="category-tag">英雄父亲</span>
+                    <span class="category-tag">牺牲精神</span>
+                    <span class="category-tag">国际空间站</span>
+                </div>
+                <p class="card-description">中国宇航员，在国际空间站工作，为了地球和人类的未来选择牺牲自己，与空间站一同撞向木星。</p>
+                <button class="chat-btn">与角色对话</button>
+            </div>
+        </article>
+
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">流浪地球1</div>
+                 <img src="my_imgs/刘启.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>刘启</h3>
+                <p class="card-role">主角 / 救援队员</p>
+                <p class="card-era">近未来</p>
+                <div class="tags-container">
+                    <span class="category-tag">叛逆青年</span>
+                    <span class="category-tag">天才机械师</span>
+                    <span class="category-tag">成长型</span>
+                </div>
+                <p class="card-description">刘培强的儿子，表面叛逆实则内心善良，在末日危机中成长为有担当的救援队员。</p>
+                <button class="chat-btn">与角色对话</button>
+            </div>
+        </article>
+
+        
+    </div>
+</section>
+
+<!-- 流浪地球2 -->
+<section id="the-wandering-earth-2" class="character-section">
+    <h2> 流浪地球2</h2>
+    <div class="character-grid">
+        <article class="character-card">
+             <div class="card-image"
+         style="background: url('my_imgs/图恒宇.jpg') center -20px / cover no-repeat; height: 180px;"></div>
+            <div class="card-content">
+                <h3>图恒宇</h3>
+                <p class="card-role">主角 / 数字生命科学家</p>
+                <p class="card-era">近未来</p>
+                <div class="tags-container">
+                    <span class="category-tag">数字生命</span>
+                    <span class="category-tag">父爱</span>
+                    <span class="category-tag">科学伦理</span>
+                </div>
+                <p class="card-description">数字生命科学家，为了复活女儿丫丫而研究数字生命技术，在科学与伦理之间挣扎。</p>
+                <button class="chat-btn">与角色对话</button>
+            </div>
+        </article>
+
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">流浪地球2</div>
+                 <img src="my_imgs/周直.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>周喆直</h3>
+                <p class="card-role">主角 / 中国外交官</p>
+                <p class="card-era">近未来</p>
+                <div class="tags-container">
+                    <span class="category-tag">外交家</span>
+                    <span class="category-tag">人类命运</span>
+                    <span class="category-tag">团结精神</span>
+                </div>
+                <p class="card-description">中国外交官，在联合国代表中国发声，强调人类命运共同体，推动国际合作。</p>
+                <button class="chat-btn">与角色对话</button>
+            </div>
+        </article>
+    </div>
+</section>
+
+<!-- 黄飞鸿系列 -->
+<section id="wong-fei-hung" class="character-section">
+    <h2> 黄飞鸿系列</h2>
+    <div class="character-grid">
+        <article class="character-card">
+           <div class="card-image"
+         style="background: url('my_imgs/黄飞鸿.jpg') center -30px / cover no-repeat; height: 180px;"></div>
+           
+            <div class="card-content">
+                <h3>黄飞鸿</h3>
+                <p class="card-role">主角 / 武术宗师</p>
+                <p class="card-era">清末民初</p>
+                <div class="tags-container">
+                    <span class="category-tag">佛山无影脚</span>
+                    <span class="category-tag">仁者无敌</span>
+                    <span class="category-tag">宝芝林</span>
+                </div>
+                <p class="card-description">广东佛山武术宗师，宝芝林医馆馆主，行侠仗义，医术高超，以仁德服人。</p>
+                <button class="chat-btn">与角色对话</button>
+            </div>
+        </article>
+
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">黄飞鸿</div>
+                 <img src="my_imgs/十三姨.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>十三姨</h3>
+                <p class="card-role">女主角 / 留洋归来</p>
+                <p class="card-era">清末民初</p>
+                <div class="tags-container">
+                    <span class="category-tag">新式女性</span>
+                    <span class="category-tag">西方思想</span>
+                    <span class="category-tag">摄影师</span>
+                </div>
+                <p class="card-description">黄飞鸿的恋人，留洋归来的新式女性，思想开放，教黄飞鸿说英语、跳交谊舞。</p>
+                <button class="chat-btn">与角色对话</button>
+            </div>
+        </article>
+
+        
+    </div>
+</section>
+
+<!-- 安德的游戏 -->
+<section id="enders-game" class="character-section">
+    <h2> 安德的游戏</h2>
+    <div class="character-grid">
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">安德的游戏</div>
+                 <img src="my_imgs/安德.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>安德·维京</h3>
+                <p class="card-role">主角 / 天才儿童</p>
+                <p class="card-era">未来太空</p>
+                <div class="tags-container">
+                    <span class="category-tag">天才指挥官</span>
+                    <span class="category-tag">心理挣扎</span>
+                    <span class="category-tag">第三子</span>
+                </div>
+                <p class="card-description">6岁的天才儿童，被选中进入战斗学校培养成指挥官，却在不知情的情况下指挥了灭绝虫族的战争。</p>
+                <button class="chat-btn">与角色对话</button>
+            </div>
+        </article>
+    </div>
+</section>
+
+<!-- 憨豆先生系列电影 -->
+<section id="mr-bean" class="character-section">
+    <h2> 憨豆先生系列</h2>
+    <div class="character-grid">
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">憨豆先生</div>
+                 <img src="my_imgs/憨豆先生.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>憨豆先生</h3>
+                <p class="card-role">主角 / 搞笑角色</p>
+                <p class="card-era">现代英国</p>
+                <div class="tags-container">
+                    <span class="category-tag">搞笑天才</span>
+                    <span class="category-tag">笨拙可爱</span>
+                    <span class="category-tag">泰迪熊</span>
+                </div>
+                <p class="card-description">总是惹出各种笑话的英国绅士，虽然行为笨拙但心地善良，有一只心爱的泰迪熊玩偶。</p>
+                <button class="chat-btn">与角色对话</button>
+            </div>
+        </article>
+    </div>
+</section>
+
+<!-- 霸王别姬 -->
+<section id="farewell-my-concubine" class="character-section">
+    <h2> 霸王别姬</h2>
+    <div class="character-grid">
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">霸王别姬</div>
+                <img src="my_imgs/程碟衣.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>程蝶衣</h3>
+                <p class="card-role">主角 / 京剧名旦</p>
+                <p class="card-era">民国至文革</p>
+                <div class="tags-container">
+                    <span class="category-tag">人戏不分</span>
+                    <span class="category-tag">虞姬</span>
+                    <span class="category-tag">悲剧命运</span>
+                </div>
+                <p class="card-description">"我本是女娇娥，又不是男儿郎" - 一生痴迷于京剧艺术，人戏不分，最终在舞台上自刎。</p>
+                <button class="chat-btn">与角色对话</button>
+            </div>
+        </article>
+
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">霸王别姬</div>
+                <img src="my_imgs/段小楼.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>段小楼</h3>
+                <p class="card-role">主角 / 京剧名角</p>
+                <p class="card-era">民国至文革</p>
+                <div class="tags-container">
+                    <span class="category-tag">霸王</span>
+                    <span class="category-tag">现实主义者</span>
+                    <span class="category-tag">背叛</span>
+                </div>
+                <p class="card-description">程蝶衣的师兄和舞台上的"霸王"，性格刚烈但最终在时代压力下背叛了蝶衣。</p>
+                <button class="chat-btn">与角色对话</button>
+            </div>
+        </article>
+    </div>
+</section>
+
+<!-- 周处除三害 -->
+<section id="the-pig-the-snake-and-the-pigeon" class="character-section">
+    <h2> 周处除三害</h2>
+    <div class="character-grid">
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">周处除三害</div>
+                <img src="my_imgs/周处.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>陈桂林</h3>
+                <p class="card-role">主角 / 通缉犯</p>
+                <p class="card-era">现代台湾</p>
+                <div class="tags-container">
+                    <span class="category-tag">浪子回头</span>
+                    <span class="category-tag">自我救赎</span>
+                    <span class="category-tag">江湖侠气</span>
+                </div>
+                <p class="card-description">发现自己名列通缉榜第三名，决定效仿"周处除三害"除掉前两名，却在过程中找到自我救赎。</p>
+                <button class="chat-btn">与角色对话</button>
+            </div>
+        </article>
+    </div>
+</section>
+
+<!-- 我不是药神 -->
+<section id="dying-to-survive" class="character-section">
+    <h2> 我不是药神</h2>
+    <div class="character-grid">
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">我不是药神</div>
+                <img src="my_imgs/程勇.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>程勇</h3>
+                <p class="card-role">主角 / 印度神油店老板</p>
+                <p class="card-era">现代中国</p>
+                <div class="tags-container">
+                    <span class="category-tag">小人物英雄</span>
+                    <span class="category-tag">走私仿制药</span>
+                    <span class="category-tag">良心觉醒</span>
+                </div>
+                <p class="card-description">从印度走私仿制药的商人，从一开始为赚钱到最后为救人赔钱卖药，完成了从小人物到英雄的转变。</p>
+                <button class="chat-btn">与角色对话</button>
+            </div>
+        </article>
+
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">我不是药神</div>
+                <img src="my_imgs/吕受益.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>吕受益</h3>
+                <p class="card-role">重要角色 / 白血病患者</p>
+                <p class="card-era">现代中国</p>
+                <div class="tags-container">
+                    <span class="category-tag">乐观坚强</span>
+                    <span class="category-tag">父亲</span>
+                    <span class="category-tag">病患代表</span>
+                </div>
+                <p class="card-description">白血病患者，为了刚出生的儿子努力活下去，是程勇走上"药神"之路的引路人。</p>
+                <button class="chat-btn">与角色对话</button>
+            </div>
+        </article>
+    </div>
+</section>
+
+<!-- 爆裂无声 -->
+<section id="wrath-of-silence" class="character-section">
+    <h2> 暴裂无声</h2>
+    <div class="character-grid">
+        <article class="character-card">
+            <div class="card-image">
+                <div class="work-badge">爆裂无声</div>
+                <img src="my_imgs/张保民.jpg" alt="沃尔特·怀特" class="character-img">   </div>
+                
+            <div class="card-content">
+                <h3>张保民</h3>
+                <p class="card-role">主角 / 哑巴矿工</p>
+                <p class="card-era">现代中国</p>
+                <div class="tags-container">
+                    <span class="category-tag">哑巴父亲</span>
+                    <span class="category-tag">社会底层</span>
+                    <span class="category-tag">寻找儿子</span>
+                </div>
+                <p class="card-description">哑巴矿工，儿子突然失踪，在寻找儿子的过程中揭开了矿业公司的黑暗秘密。</p>
+                <button class="chat-btn">与角色对话</button>
+            </div>
+        </article>
+    </div>
+</section>
+
+
+            </div>
+        </div>
+    </div>
+   
+	
+	<script>
+    // 导航菜单点击效果
+    document.addEventListener('DOMContentLoaded', function() {
+        const navLinks = document.querySelectorAll('.nav-menu a');
+        
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                // 移除所有active类
+                navLinks.forEach(item => item.classList.remove('active'));
+                // 为当前点击的链接添加active类
+                this.classList.add('active');
+                
+                // 平滑滚动到对应部分
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                if (targetSection) {
+                    e.preventDefault();
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+    
+
+        // 搜索功能（可选）
+        setupSearchFunctionality();
+    });
+    
+    // 搜索功能实现（可选）
+    function setupSearchFunctionality() {
+        // 可以在这里添加搜索框和搜索逻辑
+        console.log('搜索功能待实现');
+    }
+</script>
+	
+   
+</body>
+</html>
+	
+<script src="chat.js"></script>
+<script>
+    // 可选：添加键盘快捷键
+    document.addEventListener('keydown', function(e) {
+        // ESC键关闭对话框
+        if (e.key === 'Escape') {
+            closeChat();
+        }
+        
+        // Ctrl+E导出历史记录
+        if (e.ctrlKey && e.key === 'e') {
+            e.preventDefault();
+            exportChatHistory();
+        }
+    });
+    // 可选：添加页面加载提示
+    window.onload = function() {
+        console.log('🎬 影视角色对话系统已加载完成！');
+        console.log('💬 点击任意角色的"与角色对话"按钮开始聊天');
+        console.log('🔧 确保后端服务已启动: http://localhost:5000');
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+# Render 部署配置文件
+# 将此文件放在项目根目录，Render 会自动识别
+
+services:
+  # ====== 后端服务 ======
+  - type: pserv
+    name: aichat-backend
+    runtime: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: PORT
+        value: 5000
+
+  # ====== 前端服务 ======
+  - type: web
+    name: aichat-frontend
+    runtime: static
+    buildCommand: echo "No build needed"
+    publishPath: ./frontend
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /aichat_root.html
+
+# ====== 数据库服务 ======
+databases:
+  - name: aichat-mysql
+    databaseName: philosophy_ai
+    user: aichat_user
