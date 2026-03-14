@@ -1,5 +1,5 @@
-import pymysql
-from pymysql import MySQLError
+import psycopg2
+import psycopg2.extras
 from contextlib import contextmanager
 import logging
 from config import config
@@ -9,40 +9,39 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class Database:
-    """数据库连接管理器"""
-    
+    """PostgreSQL数据库连接管理器"""
+
     def __init__(self):
         self.connection_pool = []
         self.max_connections = 10
-        
+
     @contextmanager
     def get_connection(self):
         """获取数据库连接（上下文管理器）"""
         connection = None
         try:
-            # 1. 创建新连接
-            connection = pymysql.connect(
+            # 1. 创建新连接（PostgreSQL）
+            connection = psycopg2.connect(
                 host=config.DB_HOST,
                 port=config.DB_PORT,
                 user=config.DB_USER,
                 password=config.DB_PASSWORD,
                 database=config.DB_NAME,
-                charset='utf8mb4',
-                cursorclass=pymysql.cursors.DictCursor  # 返回字典格式
+                cursorfactory=psycopg2.extras.RealDictCursor  # 返回字典格式
             )
-            logger.debug("数据库连接创建成功")
-            
+            logger.debug("PostgreSQL数据库连接创建成功")
+
             # 2. 把连接交给调用者使用
             yield connection
-            
-        except MySQLError as e:
-            logger.error(f"数据库连接错误: {e}")
+
+        except psycopg2.Error as e:
+            logger.error(f"PostgreSQL数据库连接错误: {e}")
             raise
         finally:
             # 3. 无论如何都会执行：关闭连接
             if connection:
                 connection.close()
-                logger.debug("数据库连接已关闭")
+                logger.debug("PostgreSQL数据库连接已关闭")
     
     @contextmanager
     def get_cursor(self, connection=None):

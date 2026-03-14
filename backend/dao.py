@@ -104,21 +104,23 @@ class PhilosopherDAO:
     
     @staticmethod
     def create(philosopher: Philosopher) -> Optional[int]:
-        """创建哲学家"""
+        """创建哲学家（PostgreSQL使用RETURNING）"""
         # 1. 验证数据
         errors = philosopher.validate()
         if errors:
             logger.error(f"数据验证失败: {errors}")
             return None
-        
+
         try:
             with db.get_cursor() as cursor:
+                # PostgreSQL使用RETURNING获取新ID
                 sql = """
-                INSERT INTO philosophers 
+                INSERT INTO philosophers
                 (name, chinese_name, era, period, description, image_url, school, country)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                RETURNING id
                 """
-                
+
                 cursor.execute(sql, (
                     philosopher.name,
                     philosopher.chinese_name,
@@ -129,12 +131,15 @@ class PhilosopherDAO:
                     philosopher.school,
                     philosopher.country
                 ))
-                
-                # 返回新创建的ID
-                new_id = cursor.lastrowid
-                logger.info(f"创建哲学家成功，ID: {new_id}")
+
+                # 获取返回的新ID
+                result = cursor.fetchone()
+                new_id = result['id'] if result else None
+
+                if new_id:
+                    logger.info(f"创建哲学家成功，ID: {new_id}")
                 return new_id
-                
+
         except Exception as e:
             logger.error(f"创建哲学家失败: {e}")
             return None
