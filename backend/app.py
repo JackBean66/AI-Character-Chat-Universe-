@@ -18,6 +18,59 @@ app = Flask(__name__)
 # 配置 CORS - 允许所有来源（生产环境应限制）
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+# ====== 自动创建数据库表 ======
+def init_database():
+    """应用启动时自动创建数据库表"""
+    try:
+        from database import db
+        with db.get_connection() as conn:
+            with conn.cursor() as cursor:
+                # 创建 philosophers 表
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS philosophers (
+                        id SERIAL PRIMARY KEY,
+                        name VARCHAR(100) NOT NULL,
+                        chinese_name VARCHAR(100),
+                        era VARCHAR(100) NOT NULL,
+                        period VARCHAR(50) NOT NULL,
+                        description TEXT,
+                        image_url VARCHAR(255),
+                        school VARCHAR(100),
+                        country VARCHAR(100),
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )
+                """)
+                conn.commit()
+                app.logger.info("✅ 数据库表 'philosophers' 创建成功/已存在")
+
+                # 检查表是否为空，如果为空则插入示例数据
+                cursor.execute("SELECT COUNT(*) as count FROM philosophers")
+                result = cursor.fetchone()
+                if result['count'] == 0:
+                    app.logger.info("📝 插入示例数据...")
+                    sample_data = [
+                        ('Socrates', '苏格拉底', '公元前469-399年', 'ancient', '古希腊哲学家，西方哲学的奠基人', '苏格拉底学派', '古希腊'),
+                        ('Plato', '柏拉图', '公元前427-347年', 'ancient', '古希腊哲学家，苏格拉底的学生', '柏拉图学派', '古希腊'),
+                        ('Aristotle', '亚里士多德', '公元前384-322年', 'ancient', '古希腊哲学家，柏拉图的学生', '逍遥学派', '古希腊'),
+                        ('Confucius', '孔子', '公元前551-479年', 'ancient', '中国古代思想家、教育家，儒家学派创始人', '儒家', '中国'),
+                        ('Laozi', '老子', '约公元前6世纪', 'ancient', '中国古代哲学家，道家学派创始人', '道家', '中国'),
+                    ]
+                    cursor.executemany("""
+                        INSERT INTO philosophers (name, chinese_name, era, period, description, school, country)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    """, sample_data)
+                    conn.commit()
+                    app.logger.info(f"✅ 插入了 {len(sample_data)} 条示例数据")
+                else:
+                    app.logger.info(f"ℹ️ 数据库已有 {result['count']} 条数据")
+
+    except Exception as e:
+        app.logger.error(f"❌ 数据库初始化失败: {e}")
+
+# 在应用启动时初始化数据库
+with app.app_context():
+    init_database()
+
 # ====== 辅助函数 ======
 def success_response(data=None, message="成功", code=200):
     """成功响应模板"""
